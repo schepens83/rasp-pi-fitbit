@@ -1,0 +1,9 @@
+{
+    "path" : "~/Applications/r/pi-fitbit",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
