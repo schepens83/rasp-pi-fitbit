@@ -5,14 +5,14 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "3071546774",
+    "hash" : "562600349",
     "id" : "EE8F338A",
-    "lastKnownWriteTime" : 1515223437,
-    "last_content_update" : 1515223437173,
+    "lastKnownWriteTime" : 1515224262,
+    "last_content_update" : 1515224262042,
     "path" : "~/Applications/r/pi-fitbit/script.R",
     "project_path" : "script.R",
     "properties" : {
-        "cursorPosition" : "0,6",
+        "cursorPosition" : "2,18",
         "scrollLine" : "0",
         "tempName" : "Untitled1"
     },
