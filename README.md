@@ -1,6 +1,13 @@
 # Introduction
 This is a personal project to get my raspberry pi to display charts from my fitbit tracker
 
+# To install on the rasp pi
+- install gems that are required
+- gem install bundle
+- update ruby: https://askubuntu.com/questions/839775/how-do-i-upgrade-to-ruby-2-2-on-my-ubuntu-system
+- bla
+
+
 # Things to register (to do)
 ## Get Activity Intraday Time Series
 - activities/calories
