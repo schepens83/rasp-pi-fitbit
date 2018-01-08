@@ -30,20 +30,25 @@ result = client.activity_intraday_time_series(resource = "calories", detail_leve
 
 
 
-# temp: write result away
+# temp: write result away for eye-ball inspecting
 File.open('result', 'w') do |f2|
   # use "\n" for two lines of text
   f2.puts JSON.pretty_generate(result)
 end
 
-
-
-p csv_string = CSV.generate do |csv|
-  JSON.parse(File.open("foo.json").read).each do |hash|
+# header
+filename = "csv/activities-calories-intraday.csv"
+File.open(filename, 'w') do |f2|
+  f2.puts "level,mets,time,value"
+end
+# lines
+CSV.open(filename, "a") do |csv|
+  result["activities-calories-intraday"]["dataset"].each do |hash|
     csv << hash.values
   end
 end
 
+# p csv_string
 
 
 # write refresh token away
