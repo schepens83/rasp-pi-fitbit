@@ -1,3 +1,4 @@
 on the pi:
 - install gems that are required
+- gem install bundle
 - update ruby: https://askubuntu.com/questions/839775/how-do-i-upgrade-to-ruby-2-2-on-my-ubuntu-system

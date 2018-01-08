@@ -1,4 +1,5 @@
 require 'fitbit_api'
+require 'csv'
 require 'json'
 
 
@@ -34,6 +35,15 @@ File.open('result', 'w') do |f2|
   # use "\n" for two lines of text
   f2.puts JSON.pretty_generate(result)
 end
+
+
+
+p csv_string = CSV.generate do |csv|
+  JSON.parse(File.open("foo.json").read).each do |hash|
+    csv << hash.values
+  end
+end
+
 
 
 # write refresh token away
