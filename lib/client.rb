@@ -1,8 +1,7 @@
 require 'fitbit_api'
-require 'csv'
 require 'json'
 
-
+# read and write refresh token to a file
 class RefreshToken
   def initialize()
 
@@ -26,6 +25,7 @@ class RefreshToken
   end
 end
 
+# load api id and secret from json
 class Credentials
   def initialize(path = 'secret/cred.json')
     @data_hash = JSON.parse(File.read(path))
@@ -40,8 +40,9 @@ class Credentials
   end
 end
 
+
 class Fitbit
-  attr_reader :client
+  attr_accessor :client
 
   def initialize
     @refresh_token = RefreshToken.new
@@ -56,6 +57,4 @@ class Fitbit
   end
 
   private
-
-
 end

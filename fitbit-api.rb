@@ -1,8 +1,24 @@
 Dir[File.join(".", "lib/*.rb")].each do |f|
   require f
 end
+require 'json'
 
 fitbit = Fitbit.new
+
+
+result = fitbit.client.activity_intraday_time_series(resource = "calories", detail_level: "1min")
+data_array = result["activities-calories-intraday"]["dataset"]
+ResponseToFileWriter.write(
+  data: data_array,
+  to: "activities-calories-intraday.csv",
+  header: "level,mets,time,value"
+  )
+
+fitbit.clean_up
+
+
+
+
 
 # p client.daily_activity_summary()
 
