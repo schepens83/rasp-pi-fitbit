@@ -10,8 +10,8 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 
 # Things to register (to do)
 ## Get Activity Intraday Time Series
-- activities/calories
-- activities/steps
+- activities/calories [done]
+- activities/steps [done]
 - activities/floors
 
 ## Activity Time Series
