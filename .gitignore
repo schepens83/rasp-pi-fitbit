@@ -1,4 +1,4 @@
-secret
-csv
+secret/*
+csv/*
 result
 .Rproj.user
