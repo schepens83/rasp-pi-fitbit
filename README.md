@@ -22,7 +22,7 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 - activities/floors
 
 ## Activity Time Series
-- activities/calories
+- activities/calories [done]
 - activities/steps
 - activities/minutesSedentary
 - activities/minutesLightlyActive
