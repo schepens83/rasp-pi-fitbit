@@ -2,10 +2,17 @@
 This is a personal project to get my raspberry pi to display charts from my fitbit tracker
 
 # To install on the rasp pi
-- install gems that are required
-- gem install bundle
-- update ruby: https://askubuntu.com/questions/839775/how-do-i-upgrade-to-ruby-2-2-on-my-ubuntu-system
-- bla
+- Install R
+`sudo apt-get update && sudo apt-get install r-base`
+- Install ruby 2.3
+`sudo apt install ruby2.3`
+- Make sure this is also the version that is used.
+- download this repo
+`git clone https://github.com/schepens83/rasp-pi-fitbit.git`
+- install bundle. While in the directory type:
+`gem install bundle`
+
+
 
 
 # Things to register (to do)

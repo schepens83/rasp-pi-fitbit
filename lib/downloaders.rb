@@ -11,7 +11,7 @@ class ActivityIntraDayDownloader
   end
 
   def download_calories
-    result = @client.activity_intraday_time_series(resource = "calories", detail_level: "1min")
+    result = @client.activity_intraday_time_series(resource = "calories", detail_level: "15min")
 
     data_array = result["activities-calories-intraday"]["dataset"]
 
@@ -23,7 +23,7 @@ class ActivityIntraDayDownloader
   end
 
   def download_steps
-    result = @client.activity_intraday_time_series(resource = "steps", detail_level: "1min")
+    result = @client.activity_intraday_time_series(resource = "steps", detail_level: "15min")
 
     data_array = result["activities-steps-intraday"]["dataset"]
 

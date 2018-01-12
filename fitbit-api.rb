@@ -7,7 +7,7 @@ fitbit = Fitbit.new
 
 
 aid = ActivityIntraDayDownloader.new(fitbit)
-# aid.download_calories
+aid.download_calories
 aid.download_steps
 
 
