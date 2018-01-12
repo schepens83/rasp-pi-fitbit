@@ -12,4 +12,4 @@ ggplot(intraday_steps) +
   geom_line(aes(time, value))
 
 ggplot(intraday_calories) +
-  geom_line(aes(time, value))
+  geom_area(aes(time, value))
