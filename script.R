@@ -51,3 +51,4 @@ daily_calories %>%
 ggsave("charts/cal-day2.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
 # multi month steps
+
