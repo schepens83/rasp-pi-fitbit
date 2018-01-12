@@ -6,9 +6,9 @@ fitbit = Fitbit.new
 
 
 aid = ActivityIntraDayDownloader.new(fitbit)
-aid.download_calories("15min")
-aid.download_steps("15min")
-
+aid.download_calories_today("15min")
+aid.download_steps_today("15min")
+aid.download_calories()
 
 fitbit.clean_up
 
