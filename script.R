@@ -22,14 +22,14 @@ ggplot(intraday_steps) +
   geom_line(aes(time, value), color = "#8B4513") +
   labs(title = paste("Steps taken on", today), x = "Time", y = "Steps") +
   theme_few() +
-  ggsave("steps-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+  ggsave("charts/steps-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
 # intraday calories
 ggplot(intraday_calories) +
   geom_line(aes(time, value), color = "#FF4500") +
   labs(title = paste("Calories spent on", today), x = "Time", y = "Calories") +
   theme_few() +
-  ggsave("cal-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+  ggsave("charts/cal-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
 # mutli month calories
 daily_calories %>%
@@ -40,7 +40,7 @@ daily_calories %>%
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   facet_wrap(~ workday) +
   theme_few()
-ggsave("cal-day.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/cal-day.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
 daily_calories %>% 
   ggplot(aes(format(time, "%y-%m | %b"),value)) +
@@ -48,6 +48,6 @@ daily_calories %>%
   geom_jitter(aes(color = workday, size = vacation),alpha = 3/4) +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   theme_few()
-ggsave("cal-day2.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/cal-day2.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
 # multi month steps
