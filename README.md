@@ -9,8 +9,8 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 - Make sure this is also the version that is used.
 - download this repo
 `git clone https://github.com/schepens83/rasp-pi-fitbit.git`
-- install bundle. While in the directory type:
-`gem install bundle`
+- install bundle and install gems. While in the directory type:
+`gem install bundle && bundle install`
 
 
 

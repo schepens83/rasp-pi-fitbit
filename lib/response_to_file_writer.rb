@@ -1,3 +1,5 @@
+require 'date'
+
 class ResponseToFileWriter
   FILEPATH = "csv/"
 
@@ -9,6 +11,8 @@ class ResponseToFileWriter
     raise ArgumentError.new('No to argument provided') if to == nil
     raise ArgumentError.new('No data argument provided') if data == nil
 
+    header = "download_date,#{header}"
+
     path = FILEPATH + to
     # header
     File.open(path, 'w') do |f|
@@ -19,7 +23,7 @@ class ResponseToFileWriter
     File.open(path, "a") do |f|
       arr = []
       data.each do |hash|
-        arr << hash.values.join(',')
+        arr << Date.today.to_s + "," + hash.values.join(',')
       end
       f.puts arr.join("\n")
     end
