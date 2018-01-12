@@ -1,5 +1,3 @@
-require 'csv'
-
 class ResponseToFileWriter
   FILEPATH = "csv/"
 
@@ -18,10 +16,12 @@ class ResponseToFileWriter
     end
 
     # lines
-    CSV.open(path, "a") do |csv|
+    File.open(path, "a") do |f|
+      arr = []
       data.each do |hash|
-        csv << hash.values
+        arr << hash.values.join(',')
       end
+      f.puts arr.join("\n")
     end
   end
 end

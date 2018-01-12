@@ -1,7 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    csv (1.0.0)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     fitbit_api (0.8.1)
@@ -23,7 +22,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  csv
   fitbit_api
   json
 
