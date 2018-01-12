@@ -1,14 +1,13 @@
 Dir[File.join(".", "lib/*.rb")].each do |f|
   require f
 end
-require 'json'
 
 fitbit = Fitbit.new
 
 
 aid = ActivityIntraDayDownloader.new(fitbit)
-aid.download_calories
-aid.download_steps
+aid.download_calories("15min")
+aid.download_steps("15min")
 
 
 fitbit.clean_up

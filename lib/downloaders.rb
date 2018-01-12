@@ -10,8 +10,8 @@ class ActivityIntraDayDownloader
     @client = fitbit_client.client
   end
 
-  def download_calories
-    result = @client.activity_intraday_time_series(resource = "calories", detail_level: "15min")
+  def download_calories(detail_lvl = "15min")
+    result = @client.activity_intraday_time_series(resource = "calories", detail_level: detail_lvl)
 
     data_array = result["activities-calories-intraday"]["dataset"]
 
@@ -22,8 +22,8 @@ class ActivityIntraDayDownloader
       )
   end
 
-  def download_steps
-    result = @client.activity_intraday_time_series(resource = "steps", detail_level: "15min")
+  def download_steps(detail_lvl = "15min")
+    result = @client.activity_intraday_time_series(resource = "steps", detail_level: detail_lvl)
 
     data_array = result["activities-steps-intraday"]["dataset"]
 
