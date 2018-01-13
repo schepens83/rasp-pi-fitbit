@@ -134,7 +134,6 @@ class SleepDownloader < Downloader
   end
 
 
-
   private
 
   def get_sleep_data(days = 100)

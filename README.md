@@ -13,8 +13,6 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 `gem install bundle && bundle install`
 
 
-
-
 # Things to register (to do)
 ## Get Activity Intraday Time Series
 - activities/calories [done]
@@ -34,8 +32,8 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 save each time as new csv in order to keep record of goals
 
 ## Get Sleep Logs List
-
-for the whole history, otherwise you'll have to fiddle with multiple csv files.
+- detailed sleep logs [done]
+- summary sleep logs [done]
 
 ## Get Heart Rate Time Series
 maybe useful?
