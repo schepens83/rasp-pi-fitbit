@@ -2,13 +2,18 @@ require_relative './response_to_file_writer'
 require 'date'
 
 class Downloader
-end
 
-class ActivityIntraDayDownloader
-
+  START_DATE = "2017-08-01"
   def initialize(fitbit_client)
     raise ArgumentError.new('No fitbit client provided') if fitbit_client == nil
     @client = fitbit_client.client
+  end
+end
+
+class ActivityIntraDayDownloader < Downloader
+
+  def initialize(fitbit_client)
+    super
   end
 
   def download_calories_today(detail_lvl = "15min")
@@ -34,8 +39,15 @@ class ActivityIntraDayDownloader
       header: "time,value"
       )
   end
+end
 
-  def download_calories(start_date = "2017-08-01")
+class ActivityMultiDayDownloader < Downloader
+
+  def initialize(fitbit_client)
+    super
+  end
+
+  def download_calories(start_date = START_DATE)
     result = @client.activity_time_series(resource = "calories", start_date: start_date, end_date: Date.today)
 
     data_array = result
@@ -47,4 +59,34 @@ class ActivityIntraDayDownloader
       )
   end
 
+  def download_minutes_sedentary(start_date = START_DATE)
+    download_act_type(resource = "minutesSedentary", csv_name = "activities-minutes-sedentary.csv")
+  end
+
+  def download_minutes_lightly_active(start_date = START_DATE)
+    download_act_type(resource = "minutesLightlyActive", csv_name = "activities-minutes-lightly-active.csv")
+  end
+
+  def download_minutes_fairly_active(start_date = START_DATE)
+    download_act_type(resource = "minutesFairlyActive", csv_name = "activities-minutes-fairly-active.csv")
+  end
+
+  def download_minutes_very_active(start_date = START_DATE)
+    download_act_type(resource = "minutesVeryActive", csv_name = "activities-minutes-very-active.csv")
+  end
+
+  private
+
+  def download_act_type(start_date = START_DATE, resource, csv_name)
+    result = @client.activity_time_series(resource = resource, start_date: start_date, end_date: Date.today)
+
+    data_array = result
+
+    ResponseToFileWriter.write(
+      data: data_array,
+      to: csv_name,
+      header: "time,value"
+      )
+  end
 end
+

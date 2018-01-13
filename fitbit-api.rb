@@ -8,7 +8,13 @@ fitbit = Fitbit.new
 aid = ActivityIntraDayDownloader.new(fitbit)
 aid.download_calories_today("15min")
 aid.download_steps_today("15min")
-aid.download_calories()
+
+amd = ActivityMultiDayDownloader.new(fitbit)
+amd.download_calories()
+amd.download_minutes_sedentary()
+amd.download_minutes_fairly_active()
+amd.download_minutes_lightly_active()
+amd.download_minutes_very_active()
 
 fitbit.clean_up
 
