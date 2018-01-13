@@ -2,4 +2,5 @@ secret/*
 csv/*
 charts/*
 result
+tmp
 .Rproj.user

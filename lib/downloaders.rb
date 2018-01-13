@@ -1,5 +1,7 @@
 require_relative './response_to_file_writer'
 require 'date'
+require 'HTTParty'
+require 'json'
 
 class Downloader
 
@@ -91,20 +93,57 @@ class ActivityMultiDayDownloader < Downloader
 end
 
 class SleepDownloader < Downloader
+  attr_reader :sleep_data
 
   def initialize(fitbit_client)
     super
+    @sleep_data = get_sleep_data(days = 1)
   end
 
-  def download_sleep(start_date = START_DATE)
-    result = @client.sleep_time_series(resource = "minutesAwake", start_date: start_date, end_date: Date.today)
+  # for debugging purposes only
+  def json_sleep_data
+    File.open("tmp", 'w') do |f|
+      f.puts "#{JSON.pretty_generate(sleep_data)}"
+    end
+  end
 
-    data_array = result
+  def download_sleep_summary
+    sleep_data["sleep"].each { |day| day.delete("levels") }
+    data_array = sleep_data["sleep"]
 
     ResponseToFileWriter.write(
       data: data_array,
-      to: "sleep-minutes-awake.csv",
-      header: "time,value"
+      to: "sleep-summaries.csv",
+      header: "dateOfSleep,duration,efficiency,endTime,infoCode,logId,minutesAfterWakeup,minutesAsleep,minutesAwake,minutesToFallAsleep,startTime,minInBed,type"
       )
+  end
+
+  def download_sleep_time_series
+    data_array = []
+    sleep_data["sleep"].each do |day|
+      date_of_sleep = day["dateOfSleep"]
+      data_array << day["levels"]["data"].each { |e| e["sleepdate"] = date_of_sleep } # add sleepdate to each entry
+    end
+    data_array.flatten!
+
+    ResponseToFileWriter.write(
+      data: data_array,
+      to: "sleep-time-series.csv",
+      header: "dateTime,level,seconds,sleepdate"
+      )
+  end
+
+
+
+  private
+
+  def get_sleep_data(days = 100)
+    @client.api_version = "1.2"
+
+    result = @client.get("user/-/sleep/date/#{@client.format_date(Date.today - days)}/#{@client.format_date(Date.today)}.json", {})
+
+    @client.api_version = "1"
+
+    return result
   end
 end
