@@ -90,3 +90,21 @@ class ActivityMultiDayDownloader < Downloader
   end
 end
 
+class SleepDownloader < Downloader
+
+  def initialize(fitbit_client)
+    super
+  end
+
+  def download_sleep(start_date = START_DATE)
+    result = @client.sleep_time_series(resource = "minutesAwake", start_date: start_date, end_date: Date.today)
+
+    data_array = result
+
+    ResponseToFileWriter.write(
+      data: data_array,
+      to: "sleep-minutes-awake.csv",
+      header: "time,value"
+      )
+  end
+end

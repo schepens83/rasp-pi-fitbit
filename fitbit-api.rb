@@ -16,6 +16,9 @@ amd.download_minutes_fairly_active()
 amd.download_minutes_lightly_active()
 amd.download_minutes_very_active()
 
+sd = SleepDownloader.new(fitbit)
+sd.download_sleep
+
 fitbit.clean_up
 
 
