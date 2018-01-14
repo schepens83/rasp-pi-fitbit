@@ -73,6 +73,7 @@ sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, 
 
 # additional variables
 today = as.character(first(intraday$download_date))
+chart_magnifier = 1
 
 # GRAPHS ------------------------------------------------------------------
 # intraday steps
@@ -81,7 +82,7 @@ ggplot(intraday) +
   labs(title = paste("Steps taken on", today), x = "Time (hrs)", y = "Steps") +
   scale_x_continuous(breaks = seq(0,24, 1)) +
   theme_bw() 
-ggsave("charts/steps-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/steps-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # intraday calories
 ggplot(intraday) +
@@ -89,7 +90,7 @@ ggplot(intraday) +
   labs(title = paste("Calories spent on", today), x = "Time (hrs)", y = "Calories") +
   scale_x_continuous(breaks = seq(0,24, 1)) +
   theme_bw() 
-ggsave("charts/cal-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # mutli month calories
 daily %>%
@@ -101,7 +102,7 @@ daily %>%
   facet_wrap(~ workday) +
   theme_few() + 
   theme(legend.position = "bottom")
-ggsave("charts/cal-day.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/cal-day.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 daily %>%
   ggplot(aes(date, calories)) +
@@ -113,19 +114,20 @@ daily %>%
   scale_colour_colorblind() +
   theme_few() +
   theme(legend.position = "top")
-ggsave("charts/cal-perday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+# ggsave("charts/cal-perday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 daily %>% 
-  ggplot(aes(format(date, "%y-%m | %b"), calories)) +
+  ggplot(aes(x = reorder(format(date, "%b"), date), calories)) +
   geom_violin(alpha = 1/4) +
   geom_jitter(aes(color = workday, size = vacation), alpha = 2/4) +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   theme_few() 
-ggsave("charts/cal-day2.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/cal-day2.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # multi month type active
 daily %>%
-  filter(!sedentary > 1000 & !lightly_active > 500) %>%
+  filter(!sedentary > 1000 & !lightly_active > 500,
+         date > as.Date(today) - 90) %>%
   group_by(Time = format(date, "%y%W")) %>%
   summarise(sedentary = sum(sedentary),
             fairly_active = sum(fairly_active),
@@ -140,6 +142,6 @@ daily %>%
   labs(title = "Time spent per Activity", y = "Fraction of Activity") +
   theme_few() +
   theme(legend.position = "bottom")
-ggsave("charts/act-type-weekly.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+ggsave("charts/act-type-weekly.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 
