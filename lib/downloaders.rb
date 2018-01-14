@@ -6,6 +6,7 @@ require 'json'
 class Downloader
 
   START_DATE = "2017-08-01"
+  END_DATE = Date.today
   def initialize(fitbit_client)
     raise ArgumentError.new('No fitbit client provided') if fitbit_client == nil
     @client = fitbit_client.client
@@ -61,7 +62,7 @@ class ActivityMultiDayDownloader < Downloader
   end
 
   def download_calories(start_date = START_DATE)
-    result = @client.activity_time_series(resource = "calories", start_date: start_date, end_date: Date.today)
+    result = @client.activity_time_series(resource = "calories", start_date: start_date, end_date: END_DATE)
 
     data_array = result
 
@@ -91,7 +92,7 @@ class ActivityMultiDayDownloader < Downloader
   private
 
   def download_act_type(start_date = START_DATE, resource, csv_name)
-    result = @client.activity_time_series(resource = resource, start_date: start_date, end_date: Date.today)
+    result = @client.activity_time_series(resource = resource, start_date: start_date, end_date: END_DATE)
 
     data_array = result
 
@@ -108,7 +109,7 @@ class SleepDownloader < Downloader
 
   def initialize(fitbit_client)
     super
-    @sleep_data = get_sleep_data(days = 1)
+    @sleep_data = get_sleep_data(days = 100)
   end
 
   # for debugging purposes only
