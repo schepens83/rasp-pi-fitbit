@@ -89,7 +89,6 @@ ggplot(intraday) +
   labs(title = paste("Calories spent on", today), x = "Time (hrs)", y = "Calories") +
   scale_x_continuous(breaks = seq(0,24, 1)) +
   theme_bw() 
-
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
 # mutli month calories
@@ -124,5 +123,23 @@ daily %>%
   theme_few() 
 ggsave("charts/cal-day2.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
 
-# multi month steps
+# multi month type active
+daily %>%
+  filter(!sedentary > 1000 & !lightly_active > 500) %>%
+  group_by(Time = format(date, "%y%W")) %>%
+  summarise(sedentary = sum(sedentary),
+            fairly_active = sum(fairly_active),
+            lightly_active = sum(lightly_active),
+            very_active = sum(very_active)
+            ) %>% 
+  gather(key = "type_activity", value = "minutes", sedentary:very_active) %>% 
+  mutate(type_activity = factor(type_activity, c("very_active", "fairly_active", "lightly_active", "sedentary")),
+         hours = minutes / 60) %>% 
+  ggplot() +
+  geom_bar(stat="summary", fun.y=sum, position = "fill", aes(x = Time, y = hours, fill = type_activity)) +
+  labs(title = "Time spent per Activity", y = "Fraction of Activity") +
+  theme_few() +
+  theme(legend.position = "bottom")
+ggsave("charts/act-type-weekly.png", device = "png", width = 155 * 1.5, height = 86 * 1.5, units = "mm")
+
 
