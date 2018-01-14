@@ -30,6 +30,17 @@ class ActivityIntraDayDownloader < Downloader
       )
   end
 
+  def download_distance_today(detail_lvl = "15min")
+    result = @client.activity_intraday_time_series(resource = "distance", detail_level: detail_lvl)
+
+    data_array = result["activities-distance-intraday"]["dataset"]
+    ResponseToFileWriter.write(
+      data: data_array,
+      to: "activities-distance-intraday.csv",
+      header: "time,value"
+      )
+  end
+
   def download_steps_today(detail_lvl = "15min")
     result = @client.activity_intraday_time_series(resource = "steps", detail_level: detail_lvl)
 
