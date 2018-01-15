@@ -80,7 +80,7 @@ today = as.character(first(intraday$download_date))
 chart_magnifier = 1
 calory_color = "#FF4500"
 
-# GRAPHS ------------------------------------------------------------------
+# INTRADAY GRAPHS ------------------------------------------------------------------
 # intraday steps
 ggplot(intraday) +
   geom_area(aes(as.numeric(time)/3600, steps), fill = "#8B4513", color = "black", size = 1.5) +
@@ -97,11 +97,13 @@ ggplot(intraday) +
   theme_bw() 
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
+
+# MULTI MONTH CHARTS ------------------------------------------------------
 # mutli month calories
 daily %>%
   filter(date != today) %>%
   ggplot(aes(date, calories)) +
-  geom_point(aes(color = day.of.week), alpha = 2/3, size = 4) +
+  geom_point(aes(color = day.of.week), alpha = 2/3, size = 2) +
   geom_line() + 
   geom_smooth(se = FALSE, color = "#ff8080") +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
@@ -138,9 +140,10 @@ daily %>%
 daily %>% 
   filter(date != today) %>%
   ggplot(aes(x = reorder(format(date, "%b"), date), calories)) +
-  geom_violin(alpha = 1/4) +
-  geom_jitter(aes(color = workday, size = vacation), alpha = 2/4) +
+  geom_violin(alpha = 1/4, fill = calory_color) +
+  geom_jitter(aes(color = workday, shape = vacation), alpha = 2/4) +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
+  scale_color_calc() +
   theme_few() 
 ggsave("charts/cal-day2.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
@@ -164,13 +167,24 @@ daily %>%
   theme(legend.position = "bottom")
 ggsave("charts/act-type-weekly.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
-daily %>% 
-  filter(date > "2017-08-01") %>% 
+# mutli month steps
+daily %>%
   filter(date != today) %>%
-  ggplot(aes(x = reorder(format(date, "%b"), date), y = calories)) + 
-  geom_violin(aes(size = calories), fill = calory_color) +
-  theme_few() +
-  scale_color_colorblind() +
-  labs(title = "Calories per Month", x = "Month", y = "Calories")
-ggsave("cal-mon.png", device = "png", width = 155, height = 86, units = "mm")
+  ggplot(aes(date, steps)) +
+  geom_point(aes(color = day.of.week), alpha = 2/3, size = 2) +
+  geom_line() + 
+  geom_smooth(se = FALSE, color = "#ff8080") +
+  labs(title = "Steps per day", x = "Time", y = "Steps") +
+  facet_wrap(~ workday) +
+  theme_few() + 
+  scale_color_calc() +
+  theme(legend.position = "bottom")
+ggsave("charts/steps-day.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+# NIGHT SLEEP -------------------------------------------------------------
+
+
+
+# MULTI MONTH SLEEP -------------------------------------------------------
+
 

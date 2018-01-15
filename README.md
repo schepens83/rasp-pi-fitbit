@@ -28,7 +28,7 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 
 #### Activity Time Series
 - activities/calories [done]
-- activities/steps
+- activities/steps [done]
 - activities/minutesSedentary [done]
 - activities/minutesLightlyActive [done]
 - activities/minutesFairlyActive [done]
