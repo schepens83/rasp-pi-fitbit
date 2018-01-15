@@ -173,9 +173,9 @@ daily %>%
   ggplot(aes(date, steps)) +
   geom_point(aes(color = day.of.week), alpha = 2/3, size = 2) +
   geom_line() + 
-  geom_smooth(se = FALSE, color = "#ff8080") +
+  geom_smooth(se = FALSE, color = "#ff8080", size = 0.8) +
   labs(title = "Steps per day", x = "Time", y = "Steps") +
-  facet_wrap(~ workday) +
+  facet_grid(workday ~ .) +
   theme_few() + 
   scale_color_calc() +
   theme(legend.position = "bottom")
