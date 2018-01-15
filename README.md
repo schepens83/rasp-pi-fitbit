@@ -18,6 +18,7 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 ### Things to chart
 - sleep quality over longer time period [done]
 - HARD: sleep quality per hour from detailed log (use lubridate and overlapping period)
+- activity and sleep together and chart.Correlation
 
 
 ### Things to register
@@ -41,6 +42,7 @@ save each time as new csv in order to keep record of goals
 #### Get Sleep Logs List
 - detailed sleep logs [done]
 - summary sleep logs [done]
+- add times awake
 
 #### Get Heart Rate Time Series
 maybe useful?

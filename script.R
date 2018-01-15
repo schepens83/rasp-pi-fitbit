@@ -87,6 +87,11 @@ rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "dai
 sleep_summaries <- sleep_summaries %>% 
   select(download_date, dateOfSleep, startTime, endTime, duration, efficiency,minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, minInBed, infoCode,logId, type)
 
+sleep_summaries <- sleep_summaries %>%
+  filter(type != "classic",
+         efficiency < 100,
+         efficiency > 70)
+
 sleep_summaries <- sleep_summaries %>% 
   group_by(dateOfSleep) %>% 
   summarise(download_date = first(download_date),
@@ -100,7 +105,7 @@ sleep_summaries <- sleep_summaries %>%
             minutesAfterWakeup = sum(minutesAfterWakeup),
             minInBed = sum(minInBed),
             infoCode = last(infoCode),
-            type = first(type))
+            type = last(type))
 
 sleep_summaries <- sleep_summaries %>% 
   mutate(duration.min = duration / 60000,
@@ -223,7 +228,7 @@ daily %>%
   facet_grid(workday ~ .) +
   theme_few() + 
   scale_color_calc() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "right")
 ggsave("charts/steps-day.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # CHARTS SLEEP SUMARIES-------------------------------------------------------------
@@ -231,6 +236,7 @@ ggsave("charts/steps-day.png", device = "png", width = 155 * chart_magnifier, he
 # sleep over days past
 sleep_summaries %>%
   filter(type == "stages") %>%
+  filter(hoursAsleep > 5 ) %>%
   ggplot(aes(dateOfSleep, hoursAsleep)) +
   geom_point(aes(color = hoursAwake), size = 2.5) + 
   geom_line(alpha = 1/4) + 
@@ -242,10 +248,24 @@ sleep_summaries %>%
   labs(title = "Sleep Trends", x = "Time", y = "Hours Asleep", color = "Hours Awake")
 ggsave("charts/sleep-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
+sleep_summaries %>%
+  filter(type == "stages") %>%
+  filter(hoursAsleep > 5 ) %>%
+  ggplot(aes(dateOfSleep, hoursAsleep)) +
+  geom_point(aes(color = hoursAwake), size = 2.5) + 
+  geom_line(alpha = 1/4) + 
+  scale_colour_gradient(low = "lightgreen", high = "darkred") + 
+  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  theme_few() + 
+  theme(legend.position = "bottom") + 
+  labs(title = "Sleep Trends", x = "Time", y = "Hours Asleep", color = "Hours Awake")
+ggsave("charts/sleep-multiday-workday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
 # sleep versus time to bed
 sleep_summaries %>%
   filter(type == "stages") %>%
-  filter(hour(startTime) > 6) %>%
+  filter(hour(startTime) > 19) %>% 
+  filter(hoursAsleep > 5 ) %>%
   ggplot(aes(update(startTime, year = 2000, month = 1, day = 1), hoursAsleep)) +
   geom_point(aes(color = hoursAwake), size = 2.5) + 
   geom_line(alpha = 1/4) + 
@@ -255,14 +275,39 @@ sleep_summaries %>%
   theme_few() + 
   theme(legend.position = "bottom") + 
   scale_x_datetime(date_labels = "%H:%M") +
-  labs(title = "Sleep vs time to bed", x = "Time", y = "Hours Asleep", color = "Hours Awake")
+  labs(title = "Sleep vs time to bed", x = "Time to Bed", y = "Hours Asleep", color = "Hours Awake")
 ggsave("charts/sleep-vs-timetobed.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
-sleep_summaries %>% 
-  group_by(dateOfSleep) %>% 
-  summarize_if(.predicate = "is.numeric", "sum") %>% 
-  select(-dateOfSleep) %>%
-  chart.Correlation()
+sleep_summaries %>%
+  filter(type == "stages") %>%
+  filter(hoursAsleep > 5 ) %>%
+  ggplot(aes(dateOfSleep, hoursAwake)) +
+  geom_point(aes(color = efficiency), size = 2.5) + 
+  geom_line(alpha = 1/4) + 
+  scale_colour_gradient(low = "darkred", high = "lightgreen") + 
+  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  theme_few() + 
+  theme(legend.position = "bottom") 
+
+sleep_summaries %>%
+  filter(type == "stages") %>%
+  filter(hour(startTime) > 19) %>% 
+  filter(hoursAsleep > 5 ) %>%
+  mutate(time_asleep = update(startTime, year = 2000, month = 1, day = 1)) %>% 
+  ggplot(aes(dateOfSleep, hoursAsleep)) +
+  geom_point(aes(size = time_asleep), alpha = 1/3) + 
+  geom_line(alpha = 1/4) + 
+  scale_colour_gradient(low = "darkred", high = "lightgreen") + 
+  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  theme_few() + 
+  theme(legend.position = "bottom") 
+
+
+# sleep_summaries %>%
+#   group_by(dateOfSleep) %>%
+#   summarize_if(.predicate = "is.numeric", "sum") %>%
+#   select(-dateOfSleep) %>%
+#   chart.Correlation()
 
 
 # CHARTS SLEEP DETAILED -------------------------------------------------------
