@@ -4,6 +4,7 @@ require(fitbitr) || devtools::install_github("teramonagi/fitbitr")
 require(ggthemes) || install.packages("ggthemes")
 require(scales) || install.packages("scales")
 require(lubridate) || install.packages("lubridate")
+require(PerformanceAnalytics) || install.packages("PerformanceAnalytics")
 
 # DATA IMPORT -------------------------------------------------------------
 # intraday
@@ -25,8 +26,18 @@ sleep_summaries <- readr::read_csv("csv/sleep-summaries.csv")
 # sleep detailed
 sleep_detailed <- readr::read_csv("csv/sleep-time-series.csv")
 
-# DATA WRANGLING ----------------------------------------------------------
-# intraday
+
+# FUNCTIONS ---------------------------------------------------------------
+
+# ADDITIONAL VARS ---------------------------------------------------------
+today = as.character(first(intraday$download_date))
+chart_magnifier = 1
+calory_color = "#FF4500"
+vacation_weeks = c(1724,1725,1726,1744,1745,1752)
+trend_color = "#ff8080"
+
+
+# WRANGLING INTRADAY ----------------------------------------------------------
 intraday_calories <- intraday_calories %>% rename(calories = value) 
 intraday_calories <- intraday_calories %>% select(-download_date)
 intraday_steps <- intraday_steps %>% rename(steps = value)
@@ -39,7 +50,7 @@ intraday <- intraday %>% mutate(tmp = hms(time))
 
 rm(list = c("intraday_calories", "intraday_steps", "intraday_distance"))
 
-# daily
+# WRANGLING DAILY ---------------------------------------------------------
 daily_calories <- daily_calories %>% rename(calories = value) 
 daily_steps <- daily_steps %>% rename(steps = value) 
 daily_activities_sedentary <- daily_activities_sedentary %>% rename(sedentary = value) 
@@ -61,26 +72,60 @@ daily <- full_join(daily, daily_activities_very_active, by="time")
 
 daily <- daily %>% select(download_date, time, calories, steps, sedentary, fairly_active, lightly_active, very_active)
 daily <- daily %>% rename(date = time)
+
 daily <- daily %>% mutate(week = format(date, "%y%V"),
-                          day.of.week = factor(format(date, "%u| %a")),
-                          vacation = as.factor(ifelse(week %in% c(1724,1725,1726,1744,1745,1752), "vacation", "no vacation")),
-                          workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("2| Tue", "3| Wed", "4| Thu"), "workday", "non-workday"))
+                          day.of.week = factor(format(date, "%a"), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
+                          vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
+                          workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday"))
                           )
 
 rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "daily_activities_lightly_active", "daily_activities_very_active", "daily_calories", "daily_steps"))
 
-# sleep sumaries
-sleep_summaries <- sleep_summaries %>% select(download_date, dateOfSleep, startTime, endTime, duration, efficiency,minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, minInBed, infoCode,logId, type)
 
-# sleep detailed
+# WRANGLING SLEEP SUMARIES ------------------------------------------------
+# set in the right sequence
+sleep_summaries <- sleep_summaries %>% 
+  select(download_date, dateOfSleep, startTime, endTime, duration, efficiency,minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, minInBed, infoCode,logId, type)
+
+sleep_summaries <- sleep_summaries %>% 
+  group_by(dateOfSleep) %>% 
+  summarise(download_date = first(download_date),
+            startTime = first(startTime),
+            endTime = last(endTime),
+            efficiency = sum(efficiency),
+            duration = sum(duration),
+            minutesToFallAsleep = sum(minutesToFallAsleep),
+            minutesAsleep = sum(minutesAsleep),
+            minutesAwake = sum(minutesAwake),
+            minutesAfterWakeup = sum(minutesAfterWakeup),
+            minInBed = sum(minInBed),
+            infoCode = last(infoCode),
+            type = first(type))
+
+sleep_summaries <- sleep_summaries %>% 
+  mutate(duration.min = duration / 60000,
+         duration.hrs = duration / 3600000,
+         hoursAsleep = minutesAsleep / 60,
+         hoursAwake = minutesAwake / 60) %>%
+  select(-duration)
+
+sleep_summaries <- sleep_summaries %>%
+  mutate(week = format(dateOfSleep, "%y%V"),
+         day.of.week = factor(format(dateOfSleep, "%a"), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
+         vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
+         workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday")),
+         weekend = as.factor(ifelse(day.of.week %in% c("Sat", "Sun"), "weekend", "non-weekend"))
+         )
+
+  
+# WRANGLING SLEEP DETAILED ------------------------------------------------
 sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
 
-# additional variables
-today = as.character(first(intraday$download_date))
-chart_magnifier = 1
-calory_color = "#FF4500"
 
-# INTRADAY GRAPHS ------------------------------------------------------------------
+
+
+
+# CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
 ggplot(intraday) +
   geom_area(aes(as.numeric(time)/3600, steps), fill = "#8B4513", color = "black", size = 1.5) +
@@ -98,14 +143,14 @@ ggplot(intraday) +
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 
-# MULTI MONTH CHARTS ------------------------------------------------------
+# CHARTS DAILY  ------------------------------------------------------
 # mutli month calories
 daily %>%
   filter(date != today) %>%
   ggplot(aes(date, calories)) +
   geom_point(aes(color = day.of.week), alpha = 2/3, size = 2) +
   geom_line() + 
-  geom_smooth(se = FALSE, color = "#ff8080") +
+  geom_smooth(se = FALSE, color = trend_color) +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   facet_wrap(~ workday) +
   theme_few() + 
@@ -181,10 +226,45 @@ daily %>%
   theme(legend.position = "bottom")
 ggsave("charts/steps-day.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
-# NIGHT SLEEP -------------------------------------------------------------
+# CHARTS SLEEP SUMARIES-------------------------------------------------------------
+
+# sleep over days past
+sleep_summaries %>%
+  filter(type == "stages") %>%
+  ggplot(aes(dateOfSleep, hoursAsleep)) +
+  geom_point(aes(color = hoursAwake), size = 2.5) + 
+  geom_line(alpha = 1/4) + 
+  facet_wrap(~ workday) + 
+  scale_colour_gradient(low = "lightgreen", high = "darkred") + 
+  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  theme_few() + 
+  theme(legend.position = "bottom") + 
+  labs(title = "Sleep Trends", x = "Time", y = "Hours Asleep", color = "Hours Awake")
+ggsave("charts/sleep-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+# sleep versus time to bed
+sleep_summaries %>%
+  filter(type == "stages") %>%
+  filter(hour(startTime) > 6) %>%
+  ggplot(aes(update(startTime, year = 2000, month = 1, day = 1), hoursAsleep)) +
+  geom_point(aes(color = hoursAwake), size = 2.5) + 
+  geom_line(alpha = 1/4) + 
+  facet_wrap(~ workday) + 
+  scale_colour_gradient(low = "lightgreen", high = "darkred") + 
+  geom_smooth(se = FALSE, method = "lm", color = trend_color) +
+  theme_few() + 
+  theme(legend.position = "bottom") + 
+  scale_x_datetime(date_labels = "%H:%M") +
+  labs(title = "Sleep vs time to bed", x = "Time", y = "Hours Asleep", color = "Hours Awake")
+ggsave("charts/sleep-vs-timetobed.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+sleep_summaries %>% 
+  group_by(dateOfSleep) %>% 
+  summarize_if(.predicate = "is.numeric", "sum") %>% 
+  select(-dateOfSleep) %>%
+  chart.Correlation()
 
 
-
-# MULTI MONTH SLEEP -------------------------------------------------------
+# CHARTS SLEEP DETAILED -------------------------------------------------------
 
 

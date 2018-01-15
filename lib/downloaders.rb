@@ -121,7 +121,8 @@ class SleepDownloader < Downloader
 
   def initialize(fitbit_client)
     super
-    @sleep_data = get_sleep_data(days = 100)
+    days_to_download = (Date.today - Date.parse(START_DATE)).to_i
+    @sleep_data = get_sleep_data(days = days_to_download)
   end
 
   # for debugging purposes only
@@ -132,8 +133,8 @@ class SleepDownloader < Downloader
   end
 
   def download_sleep_summary
-    sleep_data["sleep"].each { |day| day.delete("levels") }
-    data_array = sleep_data["sleep"]
+    sleep_data.each { |day| day.delete("levels") }
+    data_array = sleep_data
 
     ResponseToFileWriter.write(
       data: data_array,
@@ -144,7 +145,7 @@ class SleepDownloader < Downloader
 
   def download_sleep_time_series
     data_array = []
-    sleep_data["sleep"].each do |day|
+    sleep_data.each do |day|
       date_of_sleep = day["dateOfSleep"]
       data_array << day["levels"]["data"].each { |e| e["sleepdate"] = date_of_sleep } # add sleepdate to each entry
     end
@@ -163,10 +164,17 @@ class SleepDownloader < Downloader
   def get_sleep_data(days = 100)
     @client.api_version = "1.2"
 
-    result = @client.get("user/-/sleep/date/#{@client.format_date(Date.today - days)}/#{@client.format_date(Date.today)}.json", {})
+    all = []
+    (0..days).each_slice(100) do |n|
+      from = n.last
+      to = n.first
 
+      result = @client.get("user/-/sleep/date/#{@client.format_date(Date.today - from)}/#{@client.format_date(Date.today - to)}.json", {})
+      all = all + result["sleep"]
+
+    end
     @client.api_version = "1"
 
-    return result
+    return all
   end
 end
