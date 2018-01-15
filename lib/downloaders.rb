@@ -61,6 +61,18 @@ class ActivityMultiDayDownloader < Downloader
     super
   end
 
+  def download_steps(start_date = START_DATE)
+    result = @client.activity_time_series(resource = "steps", start_date: start_date, end_date: END_DATE)
+
+    data_array = result
+
+    ResponseToFileWriter.write(
+      data: data_array,
+      to: "activities-steps.csv",
+      header: "time,value"
+      )
+  end
+
   def download_calories(start_date = START_DATE)
     result = @client.activity_time_series(resource = "calories", start_date: start_date, end_date: END_DATE)
 

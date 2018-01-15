@@ -12,6 +12,7 @@ aid.download_distance_today("15min")
 
 amd = ActivityMultiDayDownloader.new(fitbit)
 amd.download_calories()
+amd.download_steps()
 amd.download_minutes_sedentary()
 amd.download_minutes_fairly_active()
 amd.download_minutes_lightly_active()

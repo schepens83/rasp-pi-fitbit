@@ -13,6 +13,7 @@ intraday_distance <- readr::read_csv("csv/activities-distance-intraday.csv")
 
 # daily
 daily_calories <- readr::read_csv("csv/activities-calories.csv")
+daily_steps <- readr::read_csv("csv/activities-steps.csv")
 daily_activities_sedentary <- readr::read_csv("csv/activities-minutes-sedentary.csv")
 daily_activities_fairly_active <- readr::read_csv("csv/activities-minutes-fairly-active.csv")
 daily_activities_lightly_active <- readr::read_csv("csv/activities-minutes-lightly-active.csv")
@@ -40,11 +41,13 @@ rm(list = c("intraday_calories", "intraday_steps", "intraday_distance"))
 
 # daily
 daily_calories <- daily_calories %>% rename(calories = value) 
+daily_steps <- daily_steps %>% rename(steps = value) 
 daily_activities_sedentary <- daily_activities_sedentary %>% rename(sedentary = value) 
 daily_activities_fairly_active <- daily_activities_fairly_active %>% rename(fairly_active = value) 
 daily_activities_lightly_active <- daily_activities_lightly_active %>% rename(lightly_active = value) 
 daily_activities_very_active <- daily_activities_very_active %>% rename(very_active = value) 
 
+daily_steps <- daily_steps %>% select(-download_date) 
 daily_activities_sedentary <- daily_activities_sedentary %>% select(-download_date) 
 daily_activities_fairly_active <- daily_activities_fairly_active %>% select(-download_date) 
 daily_activities_lightly_active <- daily_activities_lightly_active %>% select(-download_date) 
@@ -52,10 +55,11 @@ daily_activities_very_active <- daily_activities_very_active %>% select(-downloa
 
 daily <- full_join(daily_activities_sedentary, daily_activities_fairly_active, by="time")
 daily <- full_join(daily, daily_calories, by="time")
+daily <- full_join(daily, daily_steps, by="time")
 daily <- full_join(daily, daily_activities_lightly_active, by="time")
 daily <- full_join(daily, daily_activities_very_active, by="time")
 
-daily <- daily %>% select(download_date, time, calories, sedentary, fairly_active, lightly_active, very_active)
+daily <- daily %>% select(download_date, time, calories, steps, sedentary, fairly_active, lightly_active, very_active)
 daily <- daily %>% rename(date = time)
 daily <- daily %>% mutate(week = format(date, "%y%V"),
                           day.of.week = factor(format(date, "%u| %a")),
@@ -63,7 +67,7 @@ daily <- daily %>% mutate(week = format(date, "%y%V"),
                           workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("2| Tue", "3| Wed", "4| Thu"), "workday", "non-workday"))
                           )
 
-rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "daily_activities_lightly_active", "daily_activities_very_active", "daily_calories"))
+rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "daily_activities_lightly_active", "daily_activities_very_active", "daily_calories", "daily_steps"))
 
 # sleep sumaries
 sleep_summaries <- sleep_summaries %>% select(download_date, dateOfSleep, startTime, endTime, duration, efficiency,minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, minInBed, infoCode,logId, type)
@@ -132,6 +136,7 @@ daily %>%
 # ggsave("charts/cal-perday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 daily %>% 
+  filter(date != today) %>%
   ggplot(aes(x = reorder(format(date, "%b"), date), calories)) +
   geom_violin(alpha = 1/4) +
   geom_jitter(aes(color = workday, size = vacation), alpha = 2/4) +
