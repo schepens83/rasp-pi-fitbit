@@ -1,7 +1,8 @@
-# Introduction
+# Readme
+## Introduction
 This is a personal project to get my raspberry pi to display charts from my fitbit tracker
 
-# To install on the rasp pi
+## To install on the rasp pi
 - Install R
 `sudo apt-get update && sudo apt-get install r-base`
 - Install ruby 2.3
@@ -13,13 +14,19 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 `gem install bundle && bundle install`
 
 
-# Things to register (to do)
-## Get Activity Intraday Time Series
+## To do
+### Things to chart
+- sleep quality over longer time period
+- HARD: sleep quality per hour from detailed log (use lubridate and overlapping period)
+
+
+### Things to register
+#### Get Activity Intraday Time Series
 - activities/calories [done]
 - activities/steps [done]
 - activities/floors
 
-## Activity Time Series
+#### Activity Time Series
 - activities/calories [done]
 - activities/steps
 - activities/minutesSedentary [done]
@@ -28,15 +35,16 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 - activities/minutesVeryActive [done]
 - activities/activityCalories
 
-## Get Activity goals
+#### Get Activity goals
 save each time as new csv in order to keep record of goals
 
-## Get Sleep Logs List
+#### Get Sleep Logs List
 - detailed sleep logs [done]
 - summary sleep logs [done]
 
-## Get Heart Rate Time Series
+#### Get Heart Rate Time Series
 maybe useful?
 
-## Get Activity Logs List
+#### Get Activity Logs List
 for running
+

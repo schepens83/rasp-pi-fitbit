@@ -74,6 +74,7 @@ sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, 
 # additional variables
 today = as.character(first(intraday$download_date))
 chart_magnifier = 1
+calory_color = "#FF4500"
 
 # GRAPHS ------------------------------------------------------------------
 # intraday steps
@@ -86,7 +87,7 @@ ggsave("charts/steps-intraday.png", device = "png", width = 155 * chart_magnifie
 
 # intraday calories
 ggplot(intraday) +
-  geom_area(aes(as.numeric(time)/3600, calories - 19), fill = "#FF4500", color = "black", size = 1.5) +
+  geom_area(aes(as.numeric(time)/3600, calories - 19), fill = calory_color, color = "black", size = 1.5) +
   labs(title = paste("Calories spent on", today), x = "Time (hrs)", y = "Calories") +
   scale_x_continuous(breaks = seq(0,24, 1)) +
   theme_bw() 
@@ -94,6 +95,7 @@ ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier,
 
 # mutli month calories
 daily %>%
+  filter(date != today) %>%
   ggplot(aes(date, calories)) +
   geom_point(aes(color = day.of.week), alpha = 2/3, size = 4) +
   geom_line() + 
@@ -103,6 +105,19 @@ daily %>%
   theme_few() + 
   theme(legend.position = "bottom")
 ggsave("charts/cal-day.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+daily %>% 
+  filter(date != today) %>%
+  ggplot(aes(date, calories)) + 
+  geom_point(aes(color = workday)) + 
+  geom_line(alpha = 1/3) + 
+  theme(legend.position = "bottom") +
+  scale_colour_brewer(palette="Set1", direction=-1) +
+  geom_smooth(se = FALSE) + 
+  theme_few() +
+  theme(legend.position = "bottom") +
+  labs(title = "Calories per Day", x = "Date", y = "Calories")
+ggsave("charts/cal-date.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 daily %>%
   ggplot(aes(date, calories)) +
@@ -144,4 +159,13 @@ daily %>%
   theme(legend.position = "bottom")
 ggsave("charts/act-type-weekly.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
+daily %>% 
+  filter(date > "2017-08-01") %>% 
+  filter(date != today) %>%
+  ggplot(aes(x = reorder(format(date, "%b"), date), y = calories)) + 
+  geom_violin(aes(size = calories), fill = calory_color) +
+  theme_few() +
+  scale_color_colorblind() +
+  labs(title = "Calories per Month", x = "Month", y = "Calories")
+ggsave("cal-mon.png", device = "png", width = 155, height = 86, units = "mm")
 
