@@ -28,6 +28,14 @@ sleep_detailed <- readr::read_csv("csv/sleep-time-series.csv")
 
 
 # FUNCTIONS ---------------------------------------------------------------
+just_time <- function(datetime, mdy, hr, mn, sec){
+  return(update(datetime, year = 2000, month = 1, mday = mdy, hour = hr, min = mn, second = sec))
+}
+
+seconds_overlap <- function(interval, startTime, hr) {
+  tmp = interval(update(startTime, hour = hr, minute = 0, second = 0), update(startTime, hour = hr + 1, minute = 0, second = 0))
+  return(seconds(as.period(intersect(interval, tmp), "seconds")))
+}
 
 # ADDITIONAL VARS ---------------------------------------------------------
 today = as.character(first(intraday$download_date))
@@ -121,14 +129,60 @@ sleep_summaries <- sleep_summaries %>%
          workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday")),
          weekend = as.factor(ifelse(day.of.week %in% c("Sat", "Sun"), "weekend", "non-weekend"))
          )
-
   
 # WRANGLING SLEEP DETAILED ------------------------------------------------
 sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
 
+sleep_by_hr <- sleep_detailed %>% 
+  filter(level != "asleep") %>% 
+  filter(level != "awake") %>% 
+  filter(level != "restless") %>% 
+  mutate(endTime = dateTime + seconds,
+         startTime = dateTime,
+         startDay = day(startTime),
+         interval = interval(startTime, endTime),
+         now = Sys.Date(),
+         `21` = seconds_overlap(interval, startTime, 21),
+         `22` = seconds_overlap(interval, startTime, 22),
+         `23` = seconds_overlap(interval, startTime, 23),
+         tmp = interval(update(endTime, hour = 0, minute = 0, second = 1), update(endTime, hour = 1, minute = 0, second = 0)),
+         `0` = seconds(as.period(intersect(interval, tmp), "seconds")) + 1,
+         `1` = seconds_overlap(interval, endTime, 1),
+         `2` = seconds_overlap(interval, endTime, 2),
+         `3` = seconds_overlap(interval, endTime, 3),
+         `4` = seconds_overlap(interval, endTime, 4),
+         `5` = seconds_overlap(interval, endTime, 5),
+         `6` = seconds_overlap(interval, endTime, 6),
+         `7` = seconds_overlap(interval, endTime, 7),
+         `8` = seconds_overlap(interval, endTime, 8),
+         `9` = seconds_overlap(interval, endTime, 9),
+         `10` = seconds_overlap(interval, endTime, 10),
+         week = format(sleepdate, "%y%V"),
+         day.of.week = factor(format(sleepdate, "%a"), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
+         vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
+         workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday")),
+         days_ago = as.integer(as_date(today) - sleepdate)
+        ) %>% 
+  select(-now, -startDay, -tmp, -dateTime, -download_date, -interval, -seconds) %>%
+  gather(`21`, `22`, `23`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, key = "hour", value = "time") %>%
+  filter(is.na(time) == FALSE) 
+
+(date <- ymd_hms("2016-07-08 12:34:56"))
+
+sleep_by_hr <- sleep_by_hr %>%
+  mutate(date = ymd_hms("2020-01-02 01:00:00"),
+         dy = ifelse(as.integer(hour) > 18, day(date) - 1, day(date)),
+         date = update(date, hour = as.integer(hour), day = dy)
+         ) %>%
+  select(-dy)
 
 
+sleep_by_hr <- sleep_by_hr %>%
+  group_by(sleepdate, date, vacation, workday, day.of.week, days_ago, level) %>%
+  summarise(time = sum(time))
 
+
+# 
 
 # CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
@@ -312,4 +366,26 @@ sleep_summaries %>%
 
 # CHARTS SLEEP DETAILED -------------------------------------------------------
 
+sleep_by_hr %>%
+  ggplot(aes(date, time / 3600)) +
+  geom_boxplot(aes(group = date, fill = level)) +
+  facet_grid(level ~ .) +
+  theme_few() + 
+  labs(title = "Time per Sleep Phase", x = "Time", y = "Hours", fill = "Phase")
+ggsave("charts/sleep-per-phase-boxplot", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+sleep_by_hr %>%
+  ggplot(aes(date, time / 3600)) +
+  stat_summary(fun.y = "mean", geom = "bar", aes(fill = fct_rev(level)), position = "fill") +
+  theme_few() + 
+  labs(title = "Average Time per Sleep Phase", x = "Time", y = "Fraction", fill = "Phase")
+ggsave("charts/sleep-per-phase-boxplot", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+sleep_by_hr %>%
+  # filter(days_ago < 14) %>%
+  ggplot(aes(date, time / 3600)) +
+  stat_summary(fun.y = "mean", geom = "bar", aes(fill = fct_rev(level)), position = "stack") +
+  theme_few() + 
+  facet_grid(. ~ workday) +
+  labs(title = "Average Time per Sleep Phase", x = "Time", y = "Average Hours", fill = "Phase")
 

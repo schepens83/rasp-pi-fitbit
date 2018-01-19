@@ -17,8 +17,9 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 ## To do
 ### Things to chart
 - sleep quality over longer time period [done]
-- HARD: sleep quality per hour from detailed log (use lubridate and overlapping period)
+- HARD: sleep quality per hour from detailed log (use lubridate and overlapping period) [done]
 - activity and sleep together and chart.Correlation
+- chart steps/calories for last x days. facet_wrap or in one line chart with alpha & color = day
 
 
 ### Things to register
@@ -30,6 +31,7 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 #### Activity Time Series
 - activities/calories [done]
 - activities/steps [done]
+- activities/steps & calories multidays
 - activities/minutesSedentary [done]
 - activities/minutesLightlyActive [done]
 - activities/minutesFairlyActive [done]
