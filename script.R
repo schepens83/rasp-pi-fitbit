@@ -38,7 +38,7 @@ seconds_overlap <- function(interval, startTime, hr) {
 }
 
 # ADDITIONAL VARS ---------------------------------------------------------
-today = as.character(first(intraday$download_date))
+today = as.character(first(daily_calories$download_date))
 chart_magnifier = 1
 calory_color = "#FF4500"
 vacation_weeks = c(1724,1725,1726,1744,1745,1752)
