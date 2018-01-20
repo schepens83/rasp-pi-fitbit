@@ -389,3 +389,17 @@ sleep_by_hr %>%
   facet_grid(. ~ workday) +
   labs(title = "Average Time per Sleep Phase", x = "Time", y = "Average Hours", fill = "Phase")
 
+sleep_by_hr %>%
+  filter(level == "wake") %>%
+  filter(sleepdate > update(as_datetime(today) - months(3), day = 1)) %>%
+  ggplot(aes(x = date, y = time / 3600)) +
+  geom_smooth(aes(color = workday, linetype = workday), method = "loess") +
+  geom_point(alpha = 1/4, aes(color = workday)) +
+  facet_wrap(~ reorder(format(sleepdate, "%B %Y"), sleepdate)) +
+  theme_few() +
+  scale_x_datetime(breaks=date_breaks("3 hour"), labels=date_format("%H:%M")) +
+  theme(legend.position = "right") +
+  labs(title = "Averag Time Awake", x = "Time", y = "Fraction Hour", color = "", linetype = "")
+ggsave("charts/awake-month", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+
