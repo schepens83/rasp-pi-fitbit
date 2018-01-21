@@ -46,15 +46,24 @@ trend_color = "#ff8080"
 
 
 # WRANGLING INTRADAY ----------------------------------------------------------
-intraday_calories <- intraday_calories %>% rename(calories = value) 
-intraday_calories <- intraday_calories %>% select(-download_date)
-intraday_steps <- intraday_steps %>% rename(steps = value)
-intraday_distance <- intraday_distance %>% rename(km = value)
-intraday_distance <- intraday_distance %>% select(-download_date)
+intraday_calories <- intraday_calories %>% rename(calories = value,
+                                                  calorie_level = level,
+                                                  calorie_mets = mets
+                                                  ) 
+intraday_calories <- intraday_calories %>% mutate(datetime = as.POSIXct(paste(date, time), format="%Y-%m-%d %H:%M:%S"))
+intraday_calories <- intraday_calories %>% select(-download_date, -time, -date)
 
-intraday <- full_join(intraday_steps, intraday_calories, by="time")
-intraday <- full_join(intraday, intraday_distance, by="time")
-intraday <- intraday %>% mutate(tmp = hms(time))
+intraday_steps <- intraday_steps %>% rename(steps = value)
+intraday_steps <- intraday_steps %>% mutate(datetime = as.POSIXct(paste(date, time), format="%Y-%m-%d %H:%M:%S"))
+intraday_steps <- intraday_steps %>% select(-time, -date)
+
+intraday_distance <- intraday_distance %>% rename(km = value)
+intraday_distance <- intraday_distance %>% mutate(datetime = as.POSIXct(paste(date, time), format="%Y-%m-%d %H:%M:%S"))
+intraday_distance <- intraday_distance %>% select(-download_date, -date, -time)
+
+intraday <- full_join(intraday_steps, intraday_calories, by="datetime")
+intraday <- full_join(intraday, intraday_distance, by="datetime")
+intraday <- intraday %>% select(download_date, datetime, everything())
 
 rm(list = c("intraday_calories", "intraday_steps", "intraday_distance"))
 
