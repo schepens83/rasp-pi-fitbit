@@ -320,16 +320,16 @@ sleep_summaries %>%
   filter(type == "stages") %>%
   filter(hour(startTime) > 19) %>% 
   filter(hoursAsleep > 5 ) %>%
+  # filter(dateOfSleep > as_date("2017-10-01") ) %>%
   ggplot(aes(update(startTime, year = 2000, month = 1, day = 1), hoursAsleep)) +
-  geom_point(aes(color = hoursAwake), size = 2.5) + 
-  geom_line(alpha = 1/4) + 
+  geom_point(aes(color = hoursAwake, shape = vacation), size = 2.5) + 
   facet_wrap(~ workday) + 
   scale_colour_gradient(low = "lightgreen", high = "darkred") + 
   geom_smooth(se = FALSE, method = "lm", color = trend_color) +
   theme_few() + 
   theme(legend.position = "bottom") + 
   scale_x_datetime(date_labels = "%H:%M") +
-  labs(title = "Sleep vs time to bed", x = "Time to Bed", y = "Hours Asleep", color = "Hours Awake")
+  labs(title = "Sleep vs time to bed", x = "Time to Bed", y = "Hours Asleep", color = "Hours Awake", shape = "")
 ggsave("charts/sleep-vs-timetobed.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 sleep_summaries %>%
@@ -401,5 +401,8 @@ sleep_by_hr %>%
   theme(legend.position = "right") +
   labs(title = "Averag Time Awake", x = "Time", y = "Fraction Hour", color = "", linetype = "")
 ggsave("charts/awake-month", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
+
+
 
 
