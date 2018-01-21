@@ -41,6 +41,7 @@ seconds_overlap <- function(interval, startTime, hr) {
 today = as.character(first(daily_calories$download_date))
 chart_magnifier = 1
 calory_color = "#FF4500"
+step_color = "#8B4513"
 vacation_weeks = c(1724,1725,1726,1744,1745,1752)
 trend_color = "#ff8080"
 
@@ -59,7 +60,7 @@ intraday_steps <- intraday_steps %>% select(-time, -date)
 
 intraday_distance <- intraday_distance %>% rename(km = value)
 intraday_distance <- intraday_distance %>% mutate(datetime = as.POSIXct(paste(date, time), format="%Y-%m-%d %H:%M:%S"))
-intraday_distance <- intraday_distance %>% select(-download_date, -date, -time)
+intraday_distance <- intraday_distance %>% select(-download_date, -date)
 
 intraday <- full_join(intraday_steps, intraday_calories, by="datetime")
 intraday <- full_join(intraday, intraday_distance, by="datetime")
@@ -195,19 +196,30 @@ sleep_by_hr <- sleep_by_hr %>%
 
 # CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
-ggplot(intraday) +
-  geom_area(aes(as.numeric(time)/3600, steps), fill = "#8B4513", color = "black", size = 1.5) +
-  labs(title = paste("Steps taken on", today), x = "Time (hrs)", y = "Steps") +
-  scale_x_continuous(breaks = seq(0,24, 1)) +
-  theme_bw() 
+# intraday steps
+intraday %>%
+  filter(as.Date(datetime) > today() - days(3)) %>%
+  mutate(Date = as.character(as.Date(datetime))) %>%
+  ggplot() +
+  geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), steps, alpha = Date), color = "black", fill = step_color, position = "dodge") +
+  labs(title = ("Steps Last 3 Days"), x = "Time (hrs)", y = "Steps") +
+  scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
+  facet_wrap(~ format(as.Date(datetime), "%A")) +
+  theme_few() +
+  theme(legend.position = "bottom")
 ggsave("charts/steps-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # intraday calories
-ggplot(intraday) +
-  geom_area(aes(as.numeric(time)/3600, calories - 19), fill = calory_color, color = "black", size = 1.5) +
-  labs(title = paste("Calories spent on", today), x = "Time (hrs)", y = "Calories") +
-  scale_x_continuous(breaks = seq(0,24, 1)) +
-  theme_bw() 
+intraday %>%
+  filter(as.Date(datetime) > today() - days(3)) %>%
+  mutate(Date = as.character(as.Date(datetime))) %>%
+  ggplot() +
+  geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), calories, alpha = Date), color = "black", fill = calory_color, position = "dodge") +
+  labs(title = ("Calories Spent Last 3 Days"), x = "Time (hrs)", y = "Calories") +
+  scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
+  facet_wrap(~ format(as.Date(datetime), "%A")) +
+  theme_few() +
+  theme(legend.position = "bottom")
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 
