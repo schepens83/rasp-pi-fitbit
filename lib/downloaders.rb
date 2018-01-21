@@ -7,51 +7,64 @@ class Downloader
 
   START_DATE = "2017-08-01"
   END_DATE = Date.today
-  def initialize(fitbit_client)
+  def initialize(fitbit_client, args = {})
     raise ArgumentError.new('No fitbit client provided') if fitbit_client == nil
     @client = fitbit_client.client
   end
 end
 
 class ActivityIntraDayDownloader < Downloader
+  attr_reader :detail_lvl, :days_back
 
-  def initialize(fitbit_client)
+  def initialize(fitbit_client, args = {})
     super
+    @detail_lvl = args[:detail] || "15min"
+    @days_back = args[:days_back] || 0 # nr of days in addition to today.
   end
 
-  def download_calories_today(detail_lvl = "15min")
-    result = @client.activity_intraday_time_series(resource = "calories", detail_level: detail_lvl)
-
-    data_array = result["activities-calories-intraday"]["dataset"]
+  def download_calories()
+    data_array = get_data(type = "calories")
 
     ResponseToFileWriter.write(
       data: data_array,
       to: "activities-calories-intraday.csv",
-      header: "level,mets,time,value"
+      header: "level,mets,time,value,date"
       )
   end
 
-  def download_distance_today(detail_lvl = "15min")
-    result = @client.activity_intraday_time_series(resource = "distance", detail_level: detail_lvl)
+  def download_distance()
+    data_array = get_data(type = "distance")
 
-    data_array = result["activities-distance-intraday"]["dataset"]
     ResponseToFileWriter.write(
       data: data_array,
       to: "activities-distance-intraday.csv",
-      header: "time,value"
+      header: "time,value,date"
       )
   end
 
-  def download_steps_today(detail_lvl = "15min")
-    result = @client.activity_intraday_time_series(resource = "steps", detail_level: detail_lvl)
-
-    data_array = result["activities-steps-intraday"]["dataset"]
+  def download_steps()
+    data_array = get_data(type = "steps")
 
     ResponseToFileWriter.write(
       data: data_array,
       to: "activities-steps-intraday.csv",
-      header: "time,value"
+      header: "time,value,date"
       )
+  end
+
+  private
+
+  def get_data(type)
+    all = []
+    days_array = (Date.today - days_back..Date.today).map(&:to_s)
+
+    days_array.each do |date|
+      result = @client.activity_intraday_time_series(resource = type.to_s, detail_level: detail_lvl, date: date)
+
+      all = all + result["activities-#{type.to_s}-intraday"]["dataset"].each { |e| e["date"] = date } # add date to each entry
+    end
+
+    return all
   end
 end
 

@@ -5,10 +5,11 @@ end
 fitbit = Fitbit.new
 
 
-aid = ActivityIntraDayDownloader.new(fitbit)
-aid.download_calories_today("15min")
-aid.download_steps_today("15min")
-aid.download_distance_today("15min")
+aid = ActivityIntraDayDownloader.new(fitbit, detail: "15min", days_back: 7)
+aid.download_calories()
+aid.download_steps()
+aid.download_distance()
+
 
 amd = ActivityMultiDayDownloader.new(fitbit)
 amd.download_calories()
