@@ -1,6 +1,5 @@
 require_relative './response_to_file_writer'
 require 'date'
-require 'HTTParty'
 require 'json'
 
 class Downloader
