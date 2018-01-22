@@ -5,8 +5,6 @@ GEM
       multipart-post (>= 1.2, < 3)
     fitbit_api (0.8.1)
       oauth2 (~> 1.0)
-    httparty (0.15.6)
-      multi_xml (>= 0.5.2)
     json (2.1.0)
     jwt (1.5.6)
     multi_json (1.12.2)
@@ -25,7 +23,6 @@ PLATFORMS
 
 DEPENDENCIES
   fitbit_api
-  httparty
   json
 
 BUNDLED WITH

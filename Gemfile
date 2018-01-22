@@ -7,5 +7,5 @@ require "rubygems"
 git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 
 gem 'fitbit_api'
-gem 'httparty'
+# gem 'httparty'
 gem 'json'
