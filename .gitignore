@@ -6,3 +6,4 @@ tmp
 .DS_Store
 .Rproj.user/
 Rplots.pdf
+.bundle/
