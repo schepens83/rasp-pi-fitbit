@@ -1,6 +1,6 @@
 require(tidyverse) || install.packages("tidyverse") 
 require(devtools) || install.packages("devtools")
-require(fitbitr) || devtools::install_github("teramonagi/fitbitr")
+# require(fitbitr) || devtools::install_github("teramonagi/fitbitr")
 require(ggthemes) || install.packages("ggthemes")
 require(scales) || install.packages("scales")
 require(lubridate) || install.packages("lubridate")
@@ -204,24 +204,34 @@ intraday %>%
   geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), steps, alpha = Date), color = "black", fill = step_color, position = "dodge") +
   labs(title = ("Steps Last 3 Days"), x = "Time (hrs)", y = "Steps") +
   scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
-  facet_wrap(~ format(as.Date(datetime), "%A")) +
+  facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
   theme_few() +
   theme(legend.position = "bottom")
 ggsave("charts/steps-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # intraday calories
+# label <- intraday %>%
+#   summarise(
+#     datetime = max(update(datetime, year = 2020, month = 1, day = 1)),
+#     calories = max(calories),
+#     label = "test"
+#   )
+
 intraday %>%
   filter(as.Date(datetime) > today() - days(3)) %>%
-  mutate(Date = as.character(as.Date(datetime))) %>%
+  mutate(Date = as.character(as.Date(datetime))) %>% 
   ggplot() +
   geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), calories, alpha = Date), color = "black", fill = calory_color, position = "dodge") +
-  labs(title = ("Calories Spent Last 3 Days"), x = "Time (hrs)", y = "Calories") +
+  facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
+  # geom_text(aes(label = label), data = label, vjust = "top", hjust = "right") +
   scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
-  facet_wrap(~ format(as.Date(datetime), "%A")) +
   theme_few() +
-  theme(legend.position = "bottom")
+  theme(legend.position = "bottom") +
+  labs(title = ("Calories Spent Last 3 Days"), x = "Time (hrs)", y = "Calories") 
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
+# stat_summary(fun.y = "sum", aes(datetime, calories)) +
+# geom_col
 
 # CHARTS DAILY  ------------------------------------------------------
 # mutli month calories

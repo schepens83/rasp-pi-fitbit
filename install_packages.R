@@ -1,0 +1,7 @@
+install.packages("tidyverse")
+install.packages("devtools")
+# devtools::install_github("teramonagi/fitbitr")
+install.packages("ggthemes")
+install.packages("scales")
+install.packages("lubridate")
+# install.packages("PerformanceAnalytics")
