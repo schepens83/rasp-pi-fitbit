@@ -1,10 +1,10 @@
-require(tidyverse) || install.packages("tidyverse") 
-require(devtools) || install.packages("devtools")
-# require(fitbitr) || devtools::install_github("teramonagi/fitbitr")
-require(ggthemes) || install.packages("ggthemes")
-require(scales) || install.packages("scales")
-require(lubridate) || install.packages("lubridate")
-require(PerformanceAnalytics) || install.packages("PerformanceAnalytics")
+require(tidyverse) 
+require(devtools) 
+# require(fitbitr) 
+require(ggthemes) 
+require(scales)
+require(lubridate)
+require(PerformanceAnalytics)
 
 # DATA IMPORT -------------------------------------------------------------
 # intraday
