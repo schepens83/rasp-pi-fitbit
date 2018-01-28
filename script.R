@@ -4,7 +4,7 @@ require(devtools)
 require(ggthemes) 
 require(scales)
 require(lubridate)
-require(PerformanceAnalytics)
+# require(PerformanceAnalytics)
 
 # DATA IMPORT -------------------------------------------------------------
 # intraday
@@ -193,6 +193,10 @@ sleep_by_hr <- sleep_by_hr %>%
 
 
 # 
+
+# GLOBAL FILTERS ----------------------------------------------------------
+daily <- daily %>%
+  filter(date > Sys.Date() - months(5))
 
 # CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
@@ -430,7 +434,7 @@ sleep_by_hr %>%
   theme_few() +
   scale_x_datetime(breaks=date_breaks("3 hour"), labels=date_format("%H:%M")) +
   theme(legend.position = "right") +
-  labs(title = "Averag Time Awake", x = "Time", y = "Fraction Hour", color = "", linetype = "")
+  labs(title = "Average Time Awake", x = "Time", y = "Fraction Hour", color = "", linetype = "")
 ggsave("charts/awake-month", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 
