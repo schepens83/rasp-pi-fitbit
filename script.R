@@ -200,7 +200,6 @@ daily <- daily %>%
 
 # CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
-# intraday steps
 intraday %>%
   filter(as.Date(datetime) > today() - days(3)) %>%
   mutate(Date = as.character(as.Date(datetime))) %>%
@@ -244,7 +243,7 @@ daily %>%
   ggplot(aes(date, calories)) +
   geom_point(aes(color = day.of.week), alpha = 2/3, size = 2) +
   geom_line() + 
-  geom_smooth(se = FALSE, color = trend_color) +
+  geom_smooth(se = FALSE, color = trend_color, method = "loess") +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   facet_wrap(~ workday) +
   theme_few() + 
@@ -268,7 +267,7 @@ daily %>%
   ggplot(aes(date, calories)) +
   geom_point(aes(color = vacation, size = calories), alpha = 2/3) +
   geom_line() + 
-  geom_smooth(se = FALSE, color = "#ff8080") +
+  geom_smooth(se = FALSE, color = "#ff8080", method = "loess") +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   facet_wrap(~ day.of.week) +
   scale_colour_colorblind() +
@@ -304,7 +303,7 @@ daily %>%
   labs(title = "Time spent per Activity", y = "Fraction of Activity") +
   theme_few() +
   theme(legend.position = "bottom")
-ggsave("charts/act-type-weekly.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+# ggsave("charts/act-type-weekly.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 # mutli month steps
 daily %>%
@@ -312,7 +311,7 @@ daily %>%
   ggplot(aes(date, steps)) +
   geom_point(aes(color = day.of.week), alpha = 2/3, size = 2) +
   geom_line() + 
-  geom_smooth(se = FALSE, color = "#ff8080", size = 0.8) +
+  geom_smooth(se = FALSE, color = "#ff8080", size = 0.8, method = "loess") +
   labs(title = "Steps per day", x = "Time", y = "Steps") +
   facet_grid(workday ~ .) +
   theme_few() + 
@@ -365,9 +364,9 @@ sleep_summaries %>%
   theme(legend.position = "bottom") + 
   scale_x_datetime(date_labels = "%H:%M") +
   labs(title = "Sleep vs time to bed", x = "Time to Bed", y = "Hours Asleep", color = "Hours Awake", shape = "")
-ggsave("charts/sleep-vs-timetobed.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+# ggsave("charts/sleep-vs-timetobed.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
-sleep_summaries %>%
+sleep_summaries %>% View()
   filter(type == "stages") %>%
   filter(hoursAsleep > 5 ) %>%
   ggplot(aes(dateOfSleep, hoursAwake)) +
@@ -384,7 +383,7 @@ sleep_summaries %>%
   filter(hoursAsleep > 5 ) %>%
   mutate(time_asleep = update(startTime, year = 2000, month = 1, day = 1)) %>% 
   ggplot(aes(dateOfSleep, hoursAsleep)) +
-  geom_point(aes(size = time_asleep), alpha = 1/3) + 
+  geom_point(aes(color = time_asleep, size = time_asleep), alpha = 3/3) + 
   geom_line(alpha = 1/4) + 
   scale_colour_gradient(low = "darkred", high = "lightgreen") + 
   geom_smooth(se = FALSE, method = "loess", color = trend_color) +
@@ -407,14 +406,14 @@ sleep_by_hr %>%
   facet_grid(level ~ .) +
   theme_few() + 
   labs(title = "Time per Sleep Phase", x = "Time", y = "Hours", fill = "Phase")
-ggsave("charts/sleep-per-phase-boxplot", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+# ggsave("charts/sleep-per-phase-boxplot", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 sleep_by_hr %>%
   ggplot(aes(date, time / 3600)) +
   stat_summary(fun.y = "mean", geom = "bar", aes(fill = fct_rev(level)), position = "fill") +
   theme_few() + 
   labs(title = "Average Time per Sleep Phase", x = "Time", y = "Fraction", fill = "Phase")
-ggsave("charts/sleep-per-phase-boxplot", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+# ggsave("charts/sleep-per-phase-boxplot", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 sleep_by_hr %>%
   # filter(days_ago < 14) %>%
