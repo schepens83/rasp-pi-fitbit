@@ -421,7 +421,7 @@ sleep_detailed %>%
   filter(sleepdate > "2018-02-08") %>%
   ggplot(aes(fix_start, level)) +
   geom_segment(aes(xend = fix_end, yend = level, color = level), size = 2) +
-  facet_grid(fct_rev(as_factor(reorder(format(as.Date(sleepdate), "%A"), sleepdate))) ~ .) +
+  facet_grid(fct_rev(as_factor(reorder(format(sleepdate, "%A"), sleepdate))) ~ .) +
   theme_few() + 
   scale_color_brewer(palette = "PuRd") +
   scale_x_datetime(breaks=date_breaks("2 hour"), labels=date_format("%H:%M")) +
