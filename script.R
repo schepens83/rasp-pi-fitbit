@@ -143,7 +143,24 @@ sleep_summaries <- sleep_summaries %>%
 # WRANGLING SLEEP DETAILED ------------------------------------------------
 sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
 
-sleep_by_hr <- sleep_detailed %>% 
+sleep_detailed <- sleep_detailed %>% 
+  mutate(start = dateTime,
+         end = dateTime + seconds) %>%
+  select(-dateTime)
+  
+sleep_detailed <- sleep_detailed %>%
+  mutate(date = ymd_hms("2020-01-02 01:00:00"),
+         dy_start = ifelse(as.integer(hour(start)) > 18, day(date) - 1, day(date)),
+         dy_end = ifelse(as.integer(hour(end)) > 18, day(date) - 1, day(date)),         
+         fix_start = update(date, hour = hour(start), minute = minute(start), second = second(start), day = dy_start),
+         fix_end = update(date, hour = hour(end), minute = minute(end), second = second(end), day = dy_end)
+  ) %>%
+  select(-dy_start, -dy_end, -date)
+
+# WRANGLING SLEEP BY HOUR ------------------------------------------------
+sleep_by_hr <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
+
+sleep_by_hr <- sleep_by_hr %>% 
   filter(level != "asleep") %>% 
   filter(level != "awake") %>% 
   filter(level != "restless") %>% 
@@ -366,7 +383,7 @@ sleep_summaries %>%
   labs(title = "Sleep vs time to bed", x = "Time to Bed", y = "Hours Asleep", color = "Hours Awake", shape = "")
 # ggsave("charts/sleep-vs-timetobed.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
-sleep_summaries %>% View()
+sleep_summaries %>% 
   filter(type == "stages") %>%
   filter(hoursAsleep > 5 ) %>%
   ggplot(aes(dateOfSleep, hoursAwake)) +
@@ -399,6 +416,20 @@ sleep_summaries %>%
 
 
 # CHARTS SLEEP DETAILED -------------------------------------------------------
+
+sleep_detailed %>%
+  filter(sleepdate > "2018-02-08") %>%
+  ggplot(aes(fix_start, level)) +
+  geom_segment(aes(xend = fix_end, yend = level, color = level), size = 2) +
+  facet_grid(fct_rev(as_factor(reorder(format(as.Date(sleepdate), "%A"), sleepdate))) ~ .) +
+  theme_few() + 
+  scale_color_brewer(palette = "PuRd") +
+  scale_x_datetime(breaks=date_breaks("2 hour"), labels=date_format("%H:%M")) +
+  labs(title = "Sleep Last 3 Nights", x = "Time", y = "")
+ggsave("charts/sleep-3nights", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+# 
+  
+# CHARTS SLEEP BY HOUR ----------------------------------------------------
 
 sleep_by_hr %>%
   ggplot(aes(date, time / 3600)) +
