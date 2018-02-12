@@ -418,9 +418,9 @@ sleep_summaries %>%
 # CHARTS SLEEP DETAILED -------------------------------------------------------
 
 sleep_detailed %>%
-  filter(sleepdate > "2018-02-08") %>%
+  filter(as.Date(sleepdate) > today() - days(3)) %>%
   ggplot(aes(fix_start, level)) +
-  geom_segment(aes(xend = fix_end, yend = level, color = level), size = 2) +
+  geom_segment(aes(xend = fix_end, yend = level, color = level), size = 7) +
   facet_grid(fct_rev(as_factor(reorder(format(sleepdate, "%A"), sleepdate))) ~ .) +
   theme_few() + 
   scale_color_brewer(palette = "PuRd") +
