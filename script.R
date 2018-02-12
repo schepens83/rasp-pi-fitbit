@@ -145,8 +145,8 @@ sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, 
 
 sleep_detailed <- sleep_detailed %>% 
   mutate(start = dateTime,
-         end = dateTime + seconds) %>%
-  select(-dateTime)
+         end = dateTime + seconds)
+
   
 sleep_detailed <- sleep_detailed %>%
   mutate(date = ymd_hms("2020-01-02 01:00:00"),
