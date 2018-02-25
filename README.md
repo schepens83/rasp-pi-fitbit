@@ -12,40 +12,29 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 `git clone https://github.com/schepens83/rasp-pi-fitbit.git`
 - install bundle and install gems. While in the directory type:
 `gem install bundle && bundle install`
+- create the charts, csv and secret folders
+`mkdir charts csv secret`
 
 
 ## To do
 ### Things to chart
-- sleep quality over longer time period [done]
-- HARD: sleep quality per hour from detailed log (use lubridate and overlapping period) [done]
 - activity and sleep together and chart.Correlation
-- chart steps/calories for last x days. facet_wrap or in one line chart with alpha & color = day [done]
-- chart sleep of last 3 nights [done]
-
+- awake percentage over time, with color for hours of sleep
+- show only relevant charts (remove the semi-analysis)
 
 ### Things to register
 #### Get Activity Intraday Time Series
-- activities/calories [done]
-- activities/steps [done]
 - activities/floors
 
 #### Activity Time Series
-- activities/calories [done]
-- activities/steps [done]
 - activities/steps & calories multidays
-- activities/minutesSedentary [done]
-- activities/minutesLightlyActive [done]
-- activities/minutesFairlyActive [done]
-- activities/minutesVeryActive [done]
 - activities/activityCalories
 
 #### Get Activity goals
 save each time as new csv in order to keep record of goals
 
 #### Get Sleep Logs List
-- detailed sleep logs [done]
-- summary sleep logs [done]
-- add times awake
+- add times awake (mini moments)
 
 #### Get Heart Rate Time Series
 maybe useful?
