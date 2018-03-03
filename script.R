@@ -101,6 +101,19 @@ sleep_summaries %>%
   labs(title = "Hours awake during the night", x = "time", y = "Number of Hours", color = "Hours Asleep")
 ggsave("charts/sleep-awake-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
+sleep_summaries %>% 
+  filter(type == "stages") %>%
+  filter(hoursAsleep > 5 ) %>%
+  ggplot(aes(dateOfSleep, perc_awake)) +
+  geom_point(aes(size = hoursAsleep, color = hoursAsleep), alpha = 0.8) + 
+  geom_line(alpha = 1/4) + 
+  scale_colour_gradient(low = "darkred", high = "lightgreen") + 
+  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  theme_few() + 
+  theme(legend.position = "bottom") +
+  labs(title = "Percentage awake", x = "time", y = "% Awake", size = "Hours Asleep", color = "Hours Asleep")
+ggsave("charts/sleep-perc-awake-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
 
 
 

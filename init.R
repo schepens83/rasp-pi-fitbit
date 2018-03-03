@@ -129,7 +129,8 @@ sleep_summaries <- sleep_summaries %>%
   mutate(duration.min = duration / 60000,
          duration.hrs = duration / 3600000,
          hoursAsleep = minutesAsleep / 60,
-         hoursAwake = minutesAwake / 60) %>%
+         hoursAwake = minutesAwake / 60,
+         perc_awake = (hoursAwake / duration.hrs)*100) %>%
   select(-duration)
 
 sleep_summaries <- sleep_summaries %>%
