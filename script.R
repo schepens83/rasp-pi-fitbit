@@ -5,6 +5,15 @@ source("init.R")
 daily <- daily %>%
   filter(date > Sys.Date() - months(5))
 
+sleep_by_hr <- sleep_by_hr %>%
+  filter(sleepdate > Sys.Date() - months(5))
+
+sleep_detailed <- sleep_detailed %>%
+  filter(sleepdate > Sys.Date() - months(5))
+
+sleep_summaries <- sleep_summaries %>%
+  filter(dateOfSleep > Sys.Date() - months(5))
+
 # CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
 intraday %>%

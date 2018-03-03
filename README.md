@@ -19,8 +19,8 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 ## To do
 ### Things to chart
 - activity and sleep together and chart.Correlation
-- awake percentage over time, with color for hours of sleep
-- show only relevant charts (remove the semi-analysis)
+- different themes per category (sleep, activity, etc)
+- show cumulative steps/calories over time for last 3 days in one graph.
 
 ### Things to register
 #### Get Activity Intraday Time Series
