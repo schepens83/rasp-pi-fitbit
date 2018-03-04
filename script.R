@@ -2,17 +2,18 @@ source("init.R")
 
 
 # GLOBAL FILTERS ----------------------------------------------------------
+mnth = 4
 daily <- daily %>%
-  filter(date > Sys.Date() - months(5))
+  filter(date > Sys.Date() - months(mnth))
 
 sleep_by_hr <- sleep_by_hr %>%
-  filter(sleepdate > Sys.Date() - months(5))
+  filter(sleepdate > Sys.Date() - months(mnth))
 
 sleep_detailed <- sleep_detailed %>%
-  filter(sleepdate > Sys.Date() - months(5))
+  filter(sleepdate > Sys.Date() - months(mnth))
 
 sleep_summaries <- sleep_summaries %>%
-  filter(dateOfSleep > Sys.Date() - months(5))
+  filter(dateOfSleep > Sys.Date() - months(mnth))
 
 # CHARTS INTRADAY  ------------------------------------------------------------------
 # intraday steps
@@ -58,10 +59,12 @@ ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier,
 daily %>% 
   filter(date != today) %>%
   ggplot(aes(date, calories)) + 
-  geom_point(aes(color = workday)) + 
+  geom_point(aes(color = calories, shape = workday), size = 2) + 
   geom_line(alpha = 1/3) + 
   theme(legend.position = "bottom") +
-  scale_colour_brewer(palette="Set1", direction=-1) +
+  # scale_color_continuous("BrBG") +
+  # scale_color_gradient_tableau("BrBG") +
+  scale_color_gradient(low="brown", high="darkGreen") + 
   geom_smooth(se = FALSE) + 
   theme_few() +
   theme(legend.position = "bottom") +
@@ -86,41 +89,42 @@ ggsave("charts/cal-day2.png", device = "png", width = 155 * chart_magnifier, hei
 sleep_summaries %>%
   filter(type == "stages") %>%
   filter(hoursAsleep > 5 ) %>%
+  filter(dateOfSleep > "2017-12-01") %>%
   ggplot(aes(dateOfSleep, hoursAsleep)) +
-  geom_point(aes(color = hoursAwake), size = 2.5) + 
-  geom_line(alpha = 1/4) + 
-  scale_color_continuous_tableau("Blue") +  
-  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  geom_col(aes(fill = hoursAsleep)) +
+  geom_line(aes(y = hoursAwake, color = hoursAwake), size = 1) + 
+  scale_fill_continuous_tableau(c("Blue")) +
+  scale_color_continuous_tableau("Red") +
+  geom_smooth(se = FALSE, method = "loess", color = trend_color, size = 0.5, alpha = 0.2) +
   theme_few() + 
   theme(legend.position = "bottom") + 
-  labs(title = "Sleep Trends", x = "Time", y = "Hours Asleep", color = "Hours Awake")
-ggsave("charts/sleep-multiday-workday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+  labs(title = "Sleep Trends", x = "Time", y = "Hours", color = "Hours Awake", fill = "Hours Asleep")
+ggsave("charts/sleep-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 
 sleep_summaries %>% 
   filter(type == "stages") %>%
   filter(hoursAsleep > 5 ) %>%
   ggplot(aes(dateOfSleep, hoursAwake)) +
-  geom_point(aes(color = hoursAsleep), size = 2.5) + 
-  geom_line(alpha = 1/4) + 
-  scale_color_continuous_tableau("Blue") +
-  geom_smooth(se = FALSE, method = "loess", color = trend_color) +
+  geom_col(aes(fill = hoursAwake)) +
+  scale_fill_continuous_tableau(c("Red")) +
+  geom_smooth(se = FALSE, method = "loess", color = trend_color, size = 1) +
   theme_few() + 
   theme(legend.position = "bottom") +
-  labs(title = "Hours awake during the night", x = "time", y = "Number of Hours", color = "Hours Asleep")
+  labs(title = "Hours awake during the night", x = "time", y = "Hours Awake", color = "Hours Awake")
 ggsave("charts/sleep-awake-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 sleep_summaries %>% 
   filter(type == "stages") %>%
   filter(hoursAsleep > 5 ) %>%
   ggplot(aes(dateOfSleep, perc_awake)) +
-  geom_point(aes(color = hoursAsleep), size = 2.5, alpha = 0.8) + 
-  geom_line(alpha = 1/4) + 
-  scale_color_continuous_tableau("Blue") +
+  geom_point(aes(color = perc_awake), size = 2.5, alpha = 0.8) +
+  geom_line(aes(color = perc_awake), alpha = 1/4, size = 2.5) + 
+  scale_color_continuous_tableau("Red") +
   geom_smooth(se = FALSE, method = "loess", color = trend_color) +
   theme_few() + 
   theme(legend.position = "bottom") +
-  labs(title = "Percentage awake", x = "time", y = "% Awake", size = "Hours Asleep", color = "Hours Asleep")
+  labs(title = "Percentage awake", x = "time", y = "% Awake", color = "% Awake")
 ggsave("charts/sleep-perc-awake-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 

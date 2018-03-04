@@ -97,6 +97,8 @@ daily <- daily %>% mutate(week = format(date, "%y%V"),
                           workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday"))
 )
 
+
+
 rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "daily_activities_lightly_active", "daily_activities_very_active", "daily_calories", "daily_steps"))
 
 
