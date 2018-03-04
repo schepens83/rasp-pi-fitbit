@@ -89,7 +89,7 @@ sleep_summaries %>%
   ggplot(aes(dateOfSleep, hoursAsleep)) +
   geom_point(aes(color = hoursAwake), size = 2.5) + 
   geom_line(alpha = 1/4) + 
-  scale_colour_gradient(low = "lightgreen", high = "darkred") + 
+  scale_color_continuous_tableau("Blue") +  
   geom_smooth(se = FALSE, method = "loess", color = trend_color) +
   theme_few() + 
   theme(legend.position = "bottom") + 
@@ -103,7 +103,7 @@ sleep_summaries %>%
   ggplot(aes(dateOfSleep, hoursAwake)) +
   geom_point(aes(color = hoursAsleep), size = 2.5) + 
   geom_line(alpha = 1/4) + 
-  scale_colour_gradient(low = "darkred", high = "lightgreen") + 
+  scale_color_continuous_tableau("Blue") +
   geom_smooth(se = FALSE, method = "loess", color = trend_color) +
   theme_few() + 
   theme(legend.position = "bottom") +
@@ -114,9 +114,9 @@ sleep_summaries %>%
   filter(type == "stages") %>%
   filter(hoursAsleep > 5 ) %>%
   ggplot(aes(dateOfSleep, perc_awake)) +
-  geom_point(aes(size = hoursAsleep, color = hoursAsleep), alpha = 0.8) + 
+  geom_point(aes(color = hoursAsleep), size = 2.5, alpha = 0.8) + 
   geom_line(alpha = 1/4) + 
-  scale_colour_gradient(low = "darkred", high = "lightgreen") + 
+  scale_color_continuous_tableau("Blue") +
   geom_smooth(se = FALSE, method = "loess", color = trend_color) +
   theme_few() + 
   theme(legend.position = "bottom") +
@@ -135,7 +135,7 @@ sleep_detailed %>%
   geom_segment(aes(xend = fix_end, yend = level, color = level), size = 7) +
   facet_grid(fct_rev(as_factor(reorder(format(sleepdate, "%A"), sleepdate))) ~ .) +
   theme_few() + 
-  scale_color_brewer(palette = "PuRd") +
+  scale_color_brewer(palette = "RdYlBu", direction = -1) +
   scale_x_datetime(breaks=date_breaks("2 hour"), labels=date_format("%H:%M")) +
   labs(title = "Sleep Last 3 Nights", x = "Time", y = "")
 ggsave("charts/sleep-3nights", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
