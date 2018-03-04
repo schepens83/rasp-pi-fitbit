@@ -3,6 +3,7 @@ source("init.R")
 
 # GLOBAL FILTERS ----------------------------------------------------------
 mnth = 4
+
 daily <- daily %>%
   filter(date > Sys.Date() - months(mnth))
 
@@ -64,8 +65,8 @@ daily %>%
   theme(legend.position = "bottom") +
   # scale_color_continuous("BrBG") +
   # scale_color_gradient_tableau("BrBG") +
-  scale_color_gradient(low="brown", high="darkGreen") + 
-  geom_smooth(se = FALSE) + 
+  scale_color_gradient(low="brown", high="Green", guide = "none") + 
+  geom_smooth(se = FALSE, method = "loess") + 
   theme_few() +
   theme(legend.position = "bottom") +
   labs(title = "Calories per Day", x = "Date", y = "Calories")

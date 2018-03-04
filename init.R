@@ -43,6 +43,10 @@ chart_magnifier = 1
 calory_color = "#FF4500"
 step_color = "#8B4513"
 vacation_weeks = c(1724,1725,1726,1744,1745,1752)
+
+# mondays = seq(as.Date("2017-01-02"), as.Date("2018-12-30"), "7 days")
+# as.POSIXct(mondays)
+
 trend_color = "#ff8080"
 
 
