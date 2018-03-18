@@ -72,6 +72,12 @@ intraday <- intraday %>% select(download_date, datetime, everything())
 
 rm(list = c("intraday_calories", "intraday_steps", "intraday_distance"))
 
+intraday <- intraday %>% 
+  group_by(day(datetime)) %>% 
+  mutate(cum_calories = cumsum(calories),
+         cum_steps = cumsum(steps),
+         cum_km = cumsum(km))
+
 # WRANGLING DAILY ---------------------------------------------------------
 daily_calories <- daily_calories %>% rename(calories = value) 
 daily_steps <- daily_steps %>% rename(steps = value) 
@@ -100,7 +106,6 @@ daily <- daily %>% mutate(week = format(date, "%y%V"),
                           vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
                           workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday"))
 )
-
 
 
 rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "daily_activities_lightly_active", "daily_activities_very_active", "daily_calories", "daily_steps"))

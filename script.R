@@ -22,7 +22,8 @@ intraday %>%
   filter(as.Date(datetime) > today() - days(3)) %>%
   mutate(Date = as.character(as.Date(datetime))) %>%
   ggplot() +
-  geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), steps, alpha = Date), color = "black", fill = step_color, position = "dodge") +
+  geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), cum_steps, alpha = Date), fill = step_color, color = "black", position = "dodge") +
+  geom_line(aes(update(datetime, year = 2020, month = 1, day = 1), steps), color = "black", position = "dodge", size = 0.3) +
   labs(title = ("Steps Last 3 Days"), x = "Time (hrs)", y = "Steps") +
   scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
   facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
@@ -42,6 +43,8 @@ intraday %>%
   filter(as.Date(datetime) > today() - days(3)) %>%
   mutate(Date = as.character(as.Date(datetime))) %>% 
   ggplot() +
+  # geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), cum_calories, alpha = Date), fill = calory_color, color = "black", position = "dodge") +
+  # geom_line(aes(update(datetime, year = 2020, month = 1, day = 1), calories), color = "black", position = "dodge", size = 0.3) +
   geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), calories, alpha = Date), color = "black", fill = calory_color, position = "dodge") +
   facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
   # geom_text(aes(label = label), data = label, vjust = "top", hjust = "right") +

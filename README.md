@@ -20,7 +20,6 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 ### Things to chart
 - activity and sleep together and chart.Correlation
 - add  workday friday as of 2018
-- show cumulative steps/calories over time for last 3 days in one graph.
 
 ### Things to register
 #### Get Activity Intraday Time Series
