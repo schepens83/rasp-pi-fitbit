@@ -1,7 +1,7 @@
-require(tidyverse) 
-require(devtools) 
-# require(fitbitr) 
-require(ggthemes) 
+require(tidyverse)
+require(devtools)
+# require(fitbitr)
+require(ggthemes)
 require(scales)
 require(lubridate)
 # require(PerformanceAnalytics)
@@ -42,7 +42,7 @@ today = as.character(first(daily_calories$download_date))
 chart_magnifier = 1
 calory_color = "#FF4500"
 step_color = "#8B4513"
-vacation_weeks = c(1724,1725,1726,1744,1745,1752)
+vacation_weeks = c(1724,1725,1726,1744,1745,1752,1813)
 
 # mondays = seq(as.Date("2017-01-02"), as.Date("2018-12-30"), "7 days")
 # as.POSIXct(mondays)
@@ -54,7 +54,7 @@ trend_color = "#ff8080"
 intraday_calories <- intraday_calories %>% rename(calories = value,
                                                   calorie_level = level,
                                                   calorie_mets = mets
-) 
+)
 intraday_calories <- intraday_calories %>% mutate(datetime = as.POSIXct(paste(date, time), format="%Y-%m-%d %H:%M:%S"))
 intraday_calories <- intraday_calories %>% select(-download_date, -time, -date)
 
@@ -72,25 +72,25 @@ intraday <- intraday %>% select(download_date, datetime, everything())
 
 rm(list = c("intraday_calories", "intraday_steps", "intraday_distance"))
 
-intraday <- intraday %>% 
-  group_by(day(datetime)) %>% 
+intraday <- intraday %>%
+  group_by(day(datetime)) %>%
   mutate(cum_calories = cumsum(calories),
          cum_steps = cumsum(steps),
          cum_km = cumsum(km))
 
 # WRANGLING DAILY ---------------------------------------------------------
-daily_calories <- daily_calories %>% rename(calories = value) 
-daily_steps <- daily_steps %>% rename(steps = value) 
-daily_activities_sedentary <- daily_activities_sedentary %>% rename(sedentary = value) 
-daily_activities_fairly_active <- daily_activities_fairly_active %>% rename(fairly_active = value) 
-daily_activities_lightly_active <- daily_activities_lightly_active %>% rename(lightly_active = value) 
-daily_activities_very_active <- daily_activities_very_active %>% rename(very_active = value) 
+daily_calories <- daily_calories %>% rename(calories = value)
+daily_steps <- daily_steps %>% rename(steps = value)
+daily_activities_sedentary <- daily_activities_sedentary %>% rename(sedentary = value)
+daily_activities_fairly_active <- daily_activities_fairly_active %>% rename(fairly_active = value)
+daily_activities_lightly_active <- daily_activities_lightly_active %>% rename(lightly_active = value)
+daily_activities_very_active <- daily_activities_very_active %>% rename(very_active = value)
 
-daily_steps <- daily_steps %>% select(-download_date) 
-daily_activities_sedentary <- daily_activities_sedentary %>% select(-download_date) 
-daily_activities_fairly_active <- daily_activities_fairly_active %>% select(-download_date) 
-daily_activities_lightly_active <- daily_activities_lightly_active %>% select(-download_date) 
-daily_activities_very_active <- daily_activities_very_active %>% select(-download_date) 
+daily_steps <- daily_steps %>% select(-download_date)
+daily_activities_sedentary <- daily_activities_sedentary %>% select(-download_date)
+daily_activities_fairly_active <- daily_activities_fairly_active %>% select(-download_date)
+daily_activities_lightly_active <- daily_activities_lightly_active %>% select(-download_date)
+daily_activities_very_active <- daily_activities_very_active %>% select(-download_date)
 
 daily <- full_join(daily_activities_sedentary, daily_activities_fairly_active, by="time")
 daily <- full_join(daily, daily_calories, by="time")
@@ -113,7 +113,7 @@ rm(list = c("daily_activities_sedentary", "daily_activities_fairly_active", "dai
 
 # WRANGLING SLEEP SUMARIES ------------------------------------------------
 # set in the right sequence
-sleep_summaries <- sleep_summaries %>% 
+sleep_summaries <- sleep_summaries %>%
   select(download_date, dateOfSleep, startTime, endTime, duration, efficiency,minutesToFallAsleep, minutesAsleep, minutesAwake, minutesAfterWakeup, minInBed, infoCode,logId, type)
 
 sleep_summaries <- sleep_summaries %>%
@@ -121,8 +121,8 @@ sleep_summaries <- sleep_summaries %>%
          efficiency < 100,
          efficiency > 70)
 
-sleep_summaries <- sleep_summaries %>% 
-  group_by(dateOfSleep) %>% 
+sleep_summaries <- sleep_summaries %>%
+  group_by(dateOfSleep) %>%
   summarise(download_date = first(download_date),
             startTime = first(startTime),
             endTime = last(endTime),
@@ -136,7 +136,7 @@ sleep_summaries <- sleep_summaries %>%
             infoCode = last(infoCode),
             type = last(type))
 
-sleep_summaries <- sleep_summaries %>% 
+sleep_summaries <- sleep_summaries %>%
   mutate(duration.min = duration / 60000,
          duration.hrs = duration / 3600000,
          hoursAsleep = minutesAsleep / 60,
@@ -155,7 +155,7 @@ sleep_summaries <- sleep_summaries %>%
 # WRANGLING SLEEP DETAILED ------------------------------------------------
 sleep_detailed <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
 
-sleep_detailed <- sleep_detailed %>% 
+sleep_detailed <- sleep_detailed %>%
   mutate(start = dateTime,
          end = dateTime + seconds)
 
@@ -163,7 +163,7 @@ sleep_detailed <- sleep_detailed %>%
 sleep_detailed <- sleep_detailed %>%
   mutate(date = ymd_hms("2020-01-02 01:00:00"),
          dy_start = ifelse(as.integer(hour(start)) > 18, day(date) - 1, day(date)),
-         dy_end = ifelse(as.integer(hour(end)) > 18, day(date) - 1, day(date)),         
+         dy_end = ifelse(as.integer(hour(end)) > 18, day(date) - 1, day(date)),
          fix_start = update(date, hour = hour(start), minute = minute(start), second = second(start), day = dy_start),
          fix_end = update(date, hour = hour(end), minute = minute(end), second = second(end), day = dy_end)
   ) %>%
@@ -172,10 +172,10 @@ sleep_detailed <- sleep_detailed %>%
 # WRANGLING SLEEP BY HOUR ------------------------------------------------
 sleep_by_hr <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
 
-sleep_by_hr <- sleep_by_hr %>% 
-  filter(level != "asleep") %>% 
-  filter(level != "awake") %>% 
-  filter(level != "restless") %>% 
+sleep_by_hr <- sleep_by_hr %>%
+  filter(level != "asleep") %>%
+  filter(level != "awake") %>%
+  filter(level != "restless") %>%
   mutate(endTime = dateTime + seconds,
          startTime = dateTime,
          startDay = day(startTime),
@@ -201,10 +201,10 @@ sleep_by_hr <- sleep_by_hr %>%
          vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
          workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday")),
          days_ago = as.integer(as_date(today) - sleepdate)
-  ) %>% 
+  ) %>%
   select(-now, -startDay, -tmp, -dateTime, -download_date, -interval, -seconds) %>%
   gather(`21`, `22`, `23`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, key = "hour", value = "time") %>%
-  filter(is.na(time) == FALSE) 
+  filter(is.na(time) == FALSE)
 
 (date <- ymd_hms("2016-07-08 12:34:56"))
 
