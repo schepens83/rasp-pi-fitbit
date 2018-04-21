@@ -1,6 +1,9 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    dropbox_api (0.1.10)
+      faraday (~> 0.9, ~> 0.8)
+      oauth2 (~> 1.1)
     faraday (0.12.2)
       multipart-post (>= 1.2, < 3)
     fitbit_api (0.8.1)
@@ -22,6 +25,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  dropbox_api
   fitbit_api
   json
 
