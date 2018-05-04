@@ -16,7 +16,7 @@ class DropboxToken
   end
 end
 
-def move_files_2_dropbox(dir)
+def move_files_2_dropbox_in_folder(dir)
   # create dropbox client
   client = DropboxApi::Client.new(DropboxToken.new.token)
 
@@ -31,36 +31,19 @@ def move_files_2_dropbox(dir)
   end
 end
 
-move_files_2_dropbox("charts")
-move_files_2_dropbox("csv")
+def move_files_2_dropbox(dir)
+  # create dropbox client
+  client = DropboxApi::Client.new(DropboxToken.new.token)
+
+  # move the files
+  Dir.glob("#{dir}/*") do |filename|
+   file_content = IO.read filename
+   client.upload "/#{File.basename(filename, ".*") + "_" + Time.now.strftime("%Y-%m").to_s + File.extname(filename)}", file_content
+  end
+end
 
 
-
-
-# Dir.glob("charts/*") do |filename|
-#   p filename
-#   file_content = IO.read filename
-#   # mtime = file_content.mtime
-#   new_filename = "#{File.basename(filename)}"
-
-#   puts "moving #{filename} to #{new_filename} ..."
-
-#   client.upload new_filename, file_content
-# end
-
-
-
-
-
-
-# p result = client.search("tst")
-# result = client.list_folder("/Picturescraps")
-#=> #<DropboxApi::Results::ListFolderResult>
-# p result.entries
-#=> [#<DropboxApi::Metadata::Folder>, #<DropboxApi::Metadata::File>]
-# p result.has_more?
-#=> false
-
-
-
-
+if Time.now.day == 28
+  move_files_2_dropbox("charts")
+  move_files_2_dropbox("csv")
+end
