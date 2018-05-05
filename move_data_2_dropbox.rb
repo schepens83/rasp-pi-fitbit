@@ -16,13 +16,15 @@ class DropboxToken
   end
 end
 
-def move_files_2_dropbox_in_folder(dir)
+def move_files_2_dropbox_in_daily_folder(dir)
   # create dropbox client
   client = DropboxApi::Client.new(DropboxToken.new.token)
 
-  # create the folder
-  folder = dir + "-" + Time.now.to_s.gsub(" ", "~")
-  client.create_folder("/#{folder}")
+  # create the folder if needed
+  folder = dir + "-daily"
+  unless File.directory?(folder)
+    client.create_folder("/#{folder}")
+  end
 
   # move the files
   Dir.glob("#{dir}/*") do |filename|
@@ -42,8 +44,9 @@ def move_files_2_dropbox(dir)
   end
 end
 
-
 if Time.now.day == 28
   move_files_2_dropbox("charts")
   move_files_2_dropbox("csv")
 end
+
+move_files_2_dropbox_in_daily_folder("charts")
