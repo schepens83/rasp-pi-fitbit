@@ -1,3 +1,4 @@
+install.packages("dplyr", repos = "http://cran.us.r-project.org", dependencies=TRUE)
 install.packages("tidyverse", repos = "http://cran.us.r-project.org", dependencies=TRUE)
 install.packages("devtools", repos = "http://cran.us.r-project.org", dependencies=TRUE)
 # devtools::install_github("teramonagi/fitbitr")
