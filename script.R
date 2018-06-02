@@ -27,7 +27,7 @@ intraday %>%
   labs(title = ("Steps Last 3 Days"), x = "Time (hrs)", y = "Steps") +
   scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
   facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
-  theme_few() +
+  theme_light() +
   theme(legend.position = "bottom")
 ggsave("charts/steps-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
@@ -49,7 +49,7 @@ intraday %>%
   facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
   # geom_text(aes(label = label), data = label, vjust = "top", hjust = "right") +
   scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
-  theme_few() +
+  theme_light() +
   theme(legend.position = "bottom") +
   labs(title = ("Calories Spent Last 3 Days"), x = "Time (hrs)", y = "Calories")
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
@@ -70,7 +70,7 @@ daily %>%
   # scale_color_gradient_tableau("BrBG") +
   scale_color_gradient(low="brown", high="Green", guide = "none") +
   geom_smooth(se = FALSE, method = "loess") +
-  theme_few() +
+  theme_light() +
   theme(legend.position = "bottom") +
   labs(title = "Calories per Day", x = "Date", y = "Calories")
 ggsave("charts/cal-date.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
@@ -83,7 +83,7 @@ daily %>%
   geom_jitter(aes(color = workday, shape = vacation), alpha = 2/4) +
   labs(title = "Calories spent per day", x = "Time", y = "Calories") +
   scale_color_calc() +
-  theme_few()
+  theme_light()
 ggsave("charts/cal-day2.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
 
@@ -100,7 +100,7 @@ sleep_summaries %>%
   scale_fill_continuous_tableau(c("Blue")) +
   scale_color_continuous_tableau("Red") +
   geom_smooth(se = FALSE, method = "loess", color = trend_color, size = 0.5, alpha = 0.2) +
-  theme_few() +
+  theme_light() +
   theme(legend.position = "bottom") +
   labs(title = "Sleep Trends", x = "Time", y = "Hours", color = "Hours Awake", fill = "Hours Asleep")
 ggsave("charts/sleep-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
@@ -113,7 +113,7 @@ sleep_summaries %>%
   geom_col(aes(fill = hoursAwake)) +
   scale_fill_continuous_tableau(c("Red")) +
   geom_smooth(se = FALSE, method = "loess", color = trend_color, size = 1) +
-  theme_few() +
+  theme_light() +
   theme(legend.position = "bottom") +
   labs(title = "Hours awake during the night", x = "time", y = "Hours Awake", color = "Hours Awake")
 ggsave("charts/sleep-awake-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
@@ -126,7 +126,7 @@ sleep_summaries %>%
   geom_line(aes(color = perc_awake), alpha = 1/4, size = 2.5) +
   scale_color_continuous_tableau("Red") +
   geom_smooth(se = FALSE, method = "loess", color = trend_color) +
-  theme_few() +
+  theme_light() +
   theme(legend.position = "bottom") +
   labs(title = "Percentage awake", x = "time", y = "% Awake", color = "% Awake")
 ggsave("charts/sleep-perc-awake-multiday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
@@ -142,7 +142,7 @@ sleep_detailed %>%
   ggplot(aes(fix_start, level)) +
   geom_segment(aes(xend = fix_end, yend = level, color = level), size = 7) +
   facet_grid(fct_rev(as_factor(reorder(format(sleepdate, "%A"), sleepdate))) ~ .) +
-  theme_few() +
+  theme_light() +
   scale_color_brewer(palette = "RdYlBu", direction = -1) +
   scale_x_datetime(breaks=date_breaks("2 hour"), labels=date_format("%H:%M")) +
   labs(title = "Sleep Last 3 Nights", x = "Time", y = "")
