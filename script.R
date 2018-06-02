@@ -7,8 +7,8 @@ mnth = 4
 daily <- daily %>%
   filter(date > Sys.Date() - months(mnth))
 
-sleep_by_hr <- sleep_by_hr %>%
-  filter(sleepdate > Sys.Date() - months(mnth))
+# sleep_by_hr <- sleep_by_hr %>%
+#   filter(sleepdate > Sys.Date() - months(mnth))
 
 sleep_detailed <- sleep_detailed %>%
   filter(sleepdate > Sys.Date() - months(mnth))
