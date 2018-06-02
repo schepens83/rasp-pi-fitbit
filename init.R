@@ -170,52 +170,56 @@ sleep_detailed <- sleep_detailed %>%
   select(-dy_start, -dy_end, -date)
 
 # WRANGLING SLEEP BY HOUR ------------------------------------------------
-sleep_by_hr <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
+# COMMENT OUT FOR NOW. Not needed for rasp pi.
+# Filtering does not seem to work. see: https://github.com/tidyverse/dplyr/issues/3206
+# problem occurs at filter(is.na(time) == FALSE) line below.
 
-sleep_by_hr <- sleep_by_hr %>%
-  filter(level != "asleep") %>%
-  filter(level != "awake") %>%
-  filter(level != "restless") %>%
-  mutate(endTime = dateTime + seconds,
-         startTime = dateTime,
-         startDay = day(startTime),
-         interval = interval(startTime, endTime),
-         now = Sys.Date(),
-         `21` = seconds_overlap(interval, startTime, 21),
-         `22` = seconds_overlap(interval, startTime, 22),
-         `23` = seconds_overlap(interval, startTime, 23),
-         tmp = interval(update(endTime, hour = 0, minute = 0, second = 1), update(endTime, hour = 1, minute = 0, second = 0)),
-         `0` = seconds(as.period(intersect(interval, tmp), "seconds")) + 1,
-         `1` = seconds_overlap(interval, endTime, 1),
-         `2` = seconds_overlap(interval, endTime, 2),
-         `3` = seconds_overlap(interval, endTime, 3),
-         `4` = seconds_overlap(interval, endTime, 4),
-         `5` = seconds_overlap(interval, endTime, 5),
-         `6` = seconds_overlap(interval, endTime, 6),
-         `7` = seconds_overlap(interval, endTime, 7),
-         `8` = seconds_overlap(interval, endTime, 8),
-         `9` = seconds_overlap(interval, endTime, 9),
-         `10` = seconds_overlap(interval, endTime, 10),
-         week = format(sleepdate, "%y%V"),
-         day.of.week = factor(format(sleepdate, "%a"), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
-         vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
-         workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday")),
-         days_ago = as.integer(as_date(today) - sleepdate)
-  ) %>%
-  select(-now, -startDay, -tmp, -dateTime, -download_date, -interval, -seconds) %>%
-  gather(`21`, `22`, `23`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, key = "hour", value = "time") %>%
-  filter(is.na(time) == FALSE)
-
-(date <- ymd_hms("2016-07-08 12:34:56"))
-
-sleep_by_hr <- sleep_by_hr %>%
-  mutate(date = ymd_hms("2020-01-02 01:00:00"),
-         dy = ifelse(as.integer(hour) > 18, day(date) - 1, day(date)),
-         date = update(date, hour = as.integer(hour), day = dy)
-  ) %>%
-  select(-dy)
-
-
-sleep_by_hr <- sleep_by_hr %>%
-  group_by(sleepdate, date, vacation, workday, day.of.week, days_ago, level) %>%
-  summarise(time = sum(time))
+# sleep_by_hr <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
+# 
+# sleep_by_hr <- sleep_by_hr %>%
+#   filter(level != "asleep") %>%
+#   filter(level != "awake") %>%
+#   filter(level != "restless") %>%
+#   mutate(endTime = dateTime + seconds,
+#          startTime = dateTime,
+#          startDay = day(startTime),
+#          interval = interval(startTime, endTime),
+#          now = Sys.Date(),
+#          `21` = seconds_overlap(interval, startTime, 21),
+#          `22` = seconds_overlap(interval, startTime, 22),
+#          `23` = seconds_overlap(interval, startTime, 23),
+#          tmp = interval(update(endTime, hour = 0, minute = 0, second = 1), update(endTime, hour = 1, minute = 0, second = 0)),
+#          `0` = seconds(as.period(intersect(interval, tmp), "seconds")) + 1,
+#          `1` = seconds_overlap(interval, endTime, 1),
+#          `2` = seconds_overlap(interval, endTime, 2),
+#          `3` = seconds_overlap(interval, endTime, 3),
+#          `4` = seconds_overlap(interval, endTime, 4),
+#          `5` = seconds_overlap(interval, endTime, 5),
+#          `6` = seconds_overlap(interval, endTime, 6),
+#          `7` = seconds_overlap(interval, endTime, 7),
+#          `8` = seconds_overlap(interval, endTime, 8),
+#          `9` = seconds_overlap(interval, endTime, 9),
+#          `10` = seconds_overlap(interval, endTime, 10),
+#          week = format(sleepdate, "%y%V"),
+#          day.of.week = factor(format(sleepdate, "%a"), levels = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")),
+#          vacation = as.factor(ifelse(week %in% vacation_weeks, "vacation", "no vacation")),
+#          workday = as.factor(ifelse(vacation == "no vacation" & day.of.week %in% c("Tue", "Wed", "Thu"), "workday", "non-workday")),
+#          days_ago = as.integer(as_date(today) - sleepdate)
+#   ) %>%
+#   select(-now, -startDay, -tmp, -dateTime, -download_date, -interval, -seconds) %>%
+#   gather(`21`, `22`, `23`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, key = "hour", value = "time") %>%
+#   filter(is.na(time) == FALSE)
+# 
+# (date <- ymd_hms("2016-07-08 12:34:56"))
+# 
+# sleep_by_hr <- sleep_by_hr %>%
+#   mutate(date = ymd_hms("2020-01-02 01:00:00"),
+#          dy = ifelse(as.integer(hour) > 18, day(date) - 1, day(date)),
+#          date = update(date, hour = as.integer(hour), day = dy)
+#   ) %>%
+#   select(-dy)
+# 
+# 
+# sleep_by_hr <- sleep_by_hr %>%
+#   group_by(sleepdate, date, vacation, workday, day.of.week, days_ago, level) %>%
+#   summarise(time = sum(time))
