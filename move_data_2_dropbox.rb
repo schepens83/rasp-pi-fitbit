@@ -22,7 +22,8 @@ def move_files_2_dropbox_in_daily_folder(dir)
 
   # create the folder if needed
   folder = dir + "-daily"
-  unless client.search folder "/"
+  result = client.search folder
+  if result.matches.empty?
     client.create_folder("/#{folder}")
   end
 
