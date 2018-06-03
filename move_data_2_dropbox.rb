@@ -29,7 +29,7 @@ def move_files_2_dropbox_in_daily_folder(dir)
   # move the files
   Dir.glob("#{dir}/*") do |filename|
    file_content = IO.read filename
-   client.upload "/#{folder}/#{File.basename(filename)}", file_content, mode: :overwrite
+   client.upload "/#{folder}/#{File.basename(filename)}", file_content, :overwrite
   end
 end
 
@@ -40,7 +40,7 @@ def move_files_2_dropbox(dir)
   # move the files
   Dir.glob("#{dir}/*") do |filename|
    file_content = IO.read filename
-   client.upload "/#{File.basename(filename, ".*") + "_" + Time.now.strftime("%Y-%m").to_s + File.extname(filename)}", file_content, mode: :overwrite
+   client.upload "/#{File.basename(filename, ".*") + "_" + Time.now.strftime("%Y-%m").to_s + File.extname(filename)}", file_content, :overwrite
   end
 end
 
