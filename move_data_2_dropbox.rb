@@ -30,7 +30,10 @@ def move_files_2_dropbox_in_daily_folder(dir)
   Dir.glob("#{dir}/*") do |filename|
     file_content = IO.read filename
     path = "/#{folder}/#{File.basename(filename)}"
-    File.delete(path) if File.exist?(path)
+    begin
+      client.delete path
+    rescue
+    end
     client.upload path, file_content
   end
 end
@@ -43,7 +46,10 @@ def move_files_2_dropbox(dir)
   Dir.glob("#{dir}/*") do |filename|
     file_content = IO.read filename
     path = "/#{File.basename(filename, ".*") + "_" + Time.now.strftime("%Y-%m").to_s + File.extname(filename)}"
-    File.delete(path) if File.exist?(path)
+    begin
+      client.delete path
+    rescue
+    end
     client.upload path, file_content
   end
 end
