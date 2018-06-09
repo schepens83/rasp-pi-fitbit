@@ -42,7 +42,7 @@ today = as.character(first(daily_calories$download_date))
 chart_magnifier = 1
 calory_color = "#FF4500"
 step_color = "#8B4513"
-vacation_weeks = c(1724,1725,1726,1744,1745,1752,1813)
+vacation_weeks = c(1724,1725,1726,1744,1745,1752,1813,1824,1825,1826)
 
 # mondays = seq(as.Date("2017-01-02"), as.Date("2018-12-30"), "7 days")
 # as.POSIXct(mondays)
@@ -175,7 +175,7 @@ sleep_detailed <- sleep_detailed %>%
 # problem occurs at filter(is.na(time) == FALSE) line below.
 
 # sleep_by_hr <- sleep_detailed %>% select(download_date, sleepdate, dateTime, level, seconds)
-# 
+#
 # sleep_by_hr <- sleep_by_hr %>%
 #   filter(level != "asleep") %>%
 #   filter(level != "awake") %>%
@@ -209,17 +209,17 @@ sleep_detailed <- sleep_detailed %>%
 #   select(-now, -startDay, -tmp, -dateTime, -download_date, -interval, -seconds) %>%
 #   gather(`21`, `22`, `23`, `0`, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9`, `10`, key = "hour", value = "time") %>%
 #   filter(is.na(time) == FALSE)
-# 
+#
 # (date <- ymd_hms("2016-07-08 12:34:56"))
-# 
+#
 # sleep_by_hr <- sleep_by_hr %>%
 #   mutate(date = ymd_hms("2020-01-02 01:00:00"),
 #          dy = ifelse(as.integer(hour) > 18, day(date) - 1, day(date)),
 #          date = update(date, hour = as.integer(hour), day = dy)
 #   ) %>%
 #   select(-dy)
-# 
-# 
+#
+#
 # sleep_by_hr <- sleep_by_hr %>%
 #   group_by(sleepdate, date, vacation, workday, day.of.week, days_ago, level) %>%
 #   summarise(time = sum(time))
