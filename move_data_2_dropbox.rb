@@ -9,5 +9,3 @@ Dir[File.join(".", "lib/*.rb")].each { |f| require f }
 # move_files_2_dropbox_in_daily_folder("charts")
 
 fm = Dropbox::FileMover.new
-
-fm.move_files_2_daily_folder(".")

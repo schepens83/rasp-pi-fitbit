@@ -1,7 +1,6 @@
 module Dropbox
   require 'dropbox_api'
 
-
   class DropboxToken
     def initialize()
       @path = 'secret/token_dropbox'
@@ -27,34 +26,26 @@ module Dropbox
       @client = DropboxApi::Client.new(DropboxToken.new.token)
     end
 
-
-    def move_files_2_daily_folder(from_folder)
+    # move to the same folder with the same path every time
+    def move_files_to_daily(from_folder)
       to_folder = from_folder + DAILY_FOLDER
 
       create_folder_if_needed(to_folder)
 
       Dir.glob("#{from_folder}/*") do |filename|
-        path = "/#{to_folder}/#{File.basename(filename)}"
-        delete_file_if_there(path)
-
-        file_content = IO.read filename
-        client.upload path, file_content
+        to_path = "/#{to_folder}/#{File.basename(filename)}"
+        delete_file_if_there(to_path)
+        move_file(filename, to_path)
       end
     end
 
-    def move_files_2_dropbox(dir)
+    # move to a timestamped file with the same path
+    def move_files_to(from_folder)
 
-      client = DropboxApi::Client.new(DropboxToken.new.token)
-
-
-      Dir.glob("#{dir}/*") do |filename|
-        file_content = IO.read filename
-        path = "/#{File.basename(filename, ".*") + "_" + Time.now.strftime("%Y-%m").to_s + File.extname(filename)}"
-        begin
-          client.delete path
-        rescue
-        end
-        client.upload path, file_content
+      Dir.glob("#{from_folder}/*") do |filename|
+        to_path = "#{timestamped(filename)}"
+        delete_file_if_there(to_path)
+        move_file(filename, to_path)
       end
     end
 
@@ -74,6 +65,13 @@ module Dropbox
       end
     end
 
+    def move_file(filename, to_path)
+      file_content = IO.read filename
+      client.upload to_path, file_content
+    end
 
+    def timestamped(filename)
+      "/#{File.basename(filename, ".*") + "_" + Time.now.strftime("%Y-%m").to_s + File.extname(filename)}"
+    end
   end
 end
