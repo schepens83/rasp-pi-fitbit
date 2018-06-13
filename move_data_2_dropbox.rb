@@ -1,11 +1,10 @@
-Dir[File.join(".", "lib/*.rb")].each { |f| require f }
-
-
-# if Time.now.day == 28
-#   move_files_2_dropbox("charts")
-#   move_files_2_dropbox("csv")
-# end
-
-# move_files_2_dropbox_in_daily_folder("charts")
+require "./lib/dropbox.rb"
 
 fm = Dropbox::FileMover.new
+
+if Time.now.day == 28
+  fm.move_files_to("charts")
+  fm.move_files_to("csv")
+end
+
+fm.move_files_to_daily("charts")
