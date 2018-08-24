@@ -65,6 +65,7 @@ intraday %>%
   # facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
   # geom_text(aes(label = label), data = label, vjust = "top", hjust = "right") +
   scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
+  scale_y_continuous(position = "right", breaks = extended_breaks(15)) +
   theme_light() +
   theme(legend.position = "bottom") +
   labs(title = ("Calories over the Day - Last 4 Days"), x = "Time (hrs)", y = "Calories")
