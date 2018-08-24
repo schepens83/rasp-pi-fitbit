@@ -54,8 +54,22 @@ intraday %>%
   labs(title = ("Calories Spent Last 3 Days"), x = "Time (hrs)", y = "Calories")
 ggsave("charts/cal-intraday.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
 
-# stat_summary(fun.y = "sum", aes(datetime, calories)) +
-# geom_col
+# on top of each other
+intraday %>%
+  filter(as.Date(datetime) > today() - days(4)) %>%
+  mutate(Date = as.character(as.Date(datetime))) %>%
+  ggplot() +
+  geom_line(aes(update(datetime, year = 2020, month = 1, day = 1), cum_calories, alpha = Date), color = calory_color, position = "dodge", size = 2) +
+  # geom_line(aes(update(datetime, year = 2020, month = 1, day = 1), calories), color = "black", position = "dodge", size = 0.3) +
+  # geom_area(aes(update(datetime, year = 2020, month = 1, day = 1), calories, alpha = Date), color = "black", fill = calory_color, position = "dodge") +
+  # facet_wrap(~ reorder(format(as.Date(datetime), "%A"), datetime)) +
+  # geom_text(aes(label = label), data = label, vjust = "top", hjust = "right") +
+  scale_x_datetime(breaks=date_breaks("6 hour"), labels=date_format("%H:%M")) +
+  theme_light() +
+  theme(legend.position = "bottom") +
+  labs(title = ("Calories over the Day - Last 4 Days"), x = "Time (hrs)", y = "Calories")
+ggsave("charts/cal-intraday-cum.png", device = "png", width = 155 * chart_magnifier, height = 93 * chart_magnifier, units = "mm")
+
 
 # CHARTS DAILY  ------------------------------------------------------
 # mutli month calories
