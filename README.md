@@ -15,6 +15,15 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 - create the charts, csv and secret folders
 `mkdir charts csv secret`
 
+### To get the refresh_token
+[see also this url for more information:](https://github.com/zokioki/fitbit_api#oauth-20-authorization-flow)
+- `client = FitbitAPI::Client.new(client_id: 'XXXXXX', client_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', redirect_uri: 'http://localhost:1410')`
+- where the redirect_uri is the callback url you have defined in the dev dashboard.
+- `client.auth_url`
+- go to the url.
+- copy the code that is provided (between = and #. It should be 40 chars long)
+- `client.get_token("code")` (where code is the code copied above. make sure to put it between "" as it should be a string.)
+- `client.refresh_token.refresh_token` gives you a string that is your refresh token. Put it in the secret/refresh_token file.
 
 ## To do
 ### Things to chart
