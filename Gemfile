@@ -10,3 +10,4 @@ gem 'fitbit_api'
 # gem 'httparty'
 gem 'json'
 gem 'dropbox_api'
+gem "rack", ">= 2.0.6"
