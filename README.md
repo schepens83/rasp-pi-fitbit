@@ -17,6 +17,8 @@ This is a personal project to get my raspberry pi to display charts from my fitb
 
 ### To get the refresh_token
 [see also this url for more information:](https://github.com/zokioki/fitbit_api#oauth-20-authorization-flow)
+open `irb` in the terminal, then:
+- `require_relative "lib/client"`
 - `client = FitbitAPI::Client.new(client_id: 'XXXXXX', client_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', redirect_uri: 'http://localhost:1410')`
 - where the redirect_uri is the callback url you have defined in the dev dashboard.
 - `client.auth_url`
