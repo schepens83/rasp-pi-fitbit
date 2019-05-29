@@ -28,8 +28,8 @@ open `irb` in the terminal, then:
 - `client.refresh_token.refresh_token` gives you a string that is your refresh token. Put it in the secret/refresh_token file.
 
 For a collapse of the above steps into 2:
-- `require_relative "lib/client"; client = FitbitAPI::Client.new(client_id: 'XXXXXX', client_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', redirect_uri: 'http://localhost:1410').auth_url`
-- `client.get_token("code")refresh_token.refresh_token`
+- `require_relative "lib/client"; client = FitbitAPI::Client.new(client_id: 'XXXXXX', client_secret: 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx', redirect_uri: 'http://localhost:1410'); client.auth_url`
+- `client.get_token("code").refresh_token.refresh_token`
 
 ## To do
 ### Things to chart
